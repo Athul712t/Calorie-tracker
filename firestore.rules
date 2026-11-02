@@ -86,6 +86,29 @@ service cloud.firestore {
       allow delete: if isOwner(userId);
     }
 
+    match /users/{userId}/profile/{docId} {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId)
+        && docId == 'current'
+        && request.resource.data.userId == userId
+        && request.resource.data.name is string && request.resource.data.name.size() <= 100
+        && request.resource.data.sex in ['MALE', 'FEMALE']
+        && request.resource.data.age is number && request.resource.data.age >= 10 && request.resource.data.age <= 120
+        && request.resource.data.heightCm is number && request.resource.data.heightCm >= 80 && request.resource.data.heightCm <= 250
+        && request.resource.data.activity in ['LIGHT', 'MODERATE', 'ACTIVE']
+        && request.resource.data.dietTags is string && request.resource.data.dietTags.size() <= 500;
+      allow delete: if isOwner(userId);
+    }
+
+    match /users/{userId}/weights/{dateId} {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId)
+        && request.resource.data.userId == userId
+        && request.resource.data.dateString is string && request.resource.data.dateString.size() <= 20
+        && request.resource.data.kg is number && request.resource.data.kg >= 20 && request.resource.data.kg <= 400;
+      allow delete: if isOwner(userId);
+    }
+
     // Explicit fallback deny
     match /{document=**} {
       allow read, write: if false;

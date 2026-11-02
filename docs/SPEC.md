@@ -6,16 +6,16 @@ Android app that logs meals from a photo, text or search, shows calories and mac
 
 | Route | Screen | Design file | Status |
 |---|---|---|---|
-| `onboarding` | Onboarding | Onboarding.dc.html | not built |
-| `home` | Home (and first-day empty state) | Main.dc.html, EmptyHome.dc.html | old UI in place, to be replaced |
+| `onboarding` | Onboarding | Onboarding.dc.html | built, not compiled |
+| `home` | Home (and first-day empty state) | Main.dc.html, EmptyHome.dc.html | built, not compiled |
 | `progress` | Progress | Progress.dc.html | not built |
 | `photos` | Progress photos | Photos.dc.html | not built |
 | `profile` | Profile | ProfileSimple.dc.html | not built |
 | `profile/edit` | Edit profile | ProfileEdit.dc.html | not built |
 | `goal/edit` | Edit goal | GoalEdit.dc.html | not built |
-| `capture` | Capture (auto-detect) | CaptureAuto.dc.html | not built |
-| `analysing` | Analysing | – | not designed |
-| `meal/{mealId}` | Meal detail with chat edit | MealDetail.dc.html, MealChat.dc.html | not built |
+| `capture` | Capture (auto-detect) | CaptureAuto.dc.html | built (CameraX), not compiled |
+| `analysing` | Analysing | – | built (no design), not compiled |
+| `meal/{mealId}` | Meal detail with chat edit | MealDetail.dc.html, MealChat.dc.html | built, not compiled |
 | `food/add` | Add food (search) | AddFood.dc.html | not built |
 | `history` | Day history | DayHistory.dc.html | not built |
 

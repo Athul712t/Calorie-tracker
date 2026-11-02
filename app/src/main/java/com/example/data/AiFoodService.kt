@@ -105,7 +105,7 @@ class AiFoodService {
         if (bitmap != null) {
             try {
                 val stream = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 75, stream)
+                thumbnailOf(bitmap).compress(Bitmap.CompressFormat.JPEG, 60, stream)
                 val byteArray = stream.toByteArray()
                 imageBase64String = Base64.encodeToString(byteArray, Base64.NO_WRAP)
             } catch (e: Exception) {
@@ -307,6 +307,83 @@ class AiFoodService {
             isAiGenerated = false,
             rawQuery = cleaned
         )
+    }
+
+    /** Small copy of the photo that is stored with the meal (Firestore documents are limited in size). */
+    private fun thumbnailOf(src: Bitmap, maxSide: Int = 256): Bitmap {
+        val longest = maxOf(src.width, src.height)
+        if (longest <= maxSide) return src
+        val scale = maxSide.toFloat() / longest
+        return Bitmap.createScaledBitmap(
+            src,
+            (src.width * scale).toInt().coerceAtLeast(1),
+            (src.height * scale).toInt().coerceAtLeast(1),
+            true
+        )
+    }
+
+    /**
+     * Applies a plain-language change ("make it 3 rotis", "no ghee") to a meal.
+     * Returns the updated meal; totals are always recomputed from the items.
+     */
+    suspend fun refineMeal(current: MealParsedResult, instruction: String): MealParsedResult {
+        val items = JSONArray()
+        current.ingredients.forEach {
+            items.put(
+                JSONObject()
+                    .put("name", it.name)
+                    .put("portion", it.portion)
+                    .put("quantity", it.quantity)
+                    .put("unitCalories", it.unitCalories)
+                    .put("unitProtein", it.unitProtein)
+                    .put("unitCarbs", it.unitCarbs)
+                    .put("unitFat", it.unitFat)
+                    .put("unitFiber", it.unitFiber)
+            )
+        }
+        val prompt = buildString {
+            append("You edit a logged meal for an Indian calorie tracker. Use Indian Food Composition Tables (IFCT 2017) values.\n")
+            append("Current meal name: \"${current.name}\"\n")
+            append("Current items (unit values are per 1 quantity): $items\n")
+            append("User request: \"${instruction.trim()}\"\n\n")
+            append("Apply only what the user asked. Keep every other item exactly as it is. ")
+            append("You may add, remove or change items and quantities. Do not invent items the user did not mention.\n")
+            append("Return JSON only: {\"name\": string, \"reply\": short sentence describing what you changed, ")
+            append("\"ingredients\": [{\"name\": string, \"portion\": string, \"quantity\": number, ")
+            append("\"unitCalories\": number, \"unitProtein\": number, \"unitCarbs\": number, \"unitFat\": number, \"unitFiber\": number}]}\n")
+        }
+        try {
+            val response = withTimeout(25_000L) { model.generateContent(prompt) }
+            val text = response.text
+            if (text.isNullOrBlank()) {
+                throw AiNutritionException("The AI returned an empty answer. Please try again.")
+            }
+            val cleaned = text.trim().removePrefix("```json").removePrefix("```").removeSuffix("```").trim()
+            val json = JSONObject(cleaned)
+            val items2 = IngredientJson.fromArray(json.optJSONArray("ingredients"))
+            if (items2.isEmpty()) {
+                throw AiNutritionException("I couldn't apply that change. Try rephrasing it.")
+            }
+            return current.copy(
+                name = json.optString("name", current.name).ifBlank { current.name },
+                calories = items2.sumOf { it.totalCalories },
+                protein = items2.sumOf { it.totalProtein },
+                carbs = items2.sumOf { it.totalCarbs },
+                fat = items2.sumOf { it.totalFat },
+                fiber = items2.sumOf { it.totalFiber },
+                ingredients = items2,
+                notes = json.optString("reply", "")
+            )
+        } catch (e: TimeoutCancellationException) {
+            throw AiNutritionException("That took too long. Please try again.", cause = e)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: AiNutritionException) {
+            throw e
+        } catch (e: Exception) {
+            Log.e(TAG, "refineMeal failed: ${e.message}", e)
+            throw AiNutritionException("I couldn't apply that change: ${e.localizedMessage ?: "unknown error"}", cause = e)
+        }
     }
 
     suspend fun getIndianSuggestionsForRemainingMacros(

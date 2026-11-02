@@ -5,6 +5,7 @@ package com.example.ui.nav
  * See the navigation map in docs/SPEC.md.
  */
 object Routes {
+    const val GATE = "gate"
     const val SCREEN_INDEX = "screens"          // developer index, not part of the product
     const val ONBOARDING = "onboarding"         // Onboarding.dc.html
     const val HOME = "home"                     // Main.dc.html, EmptyHome.dc.html (empty state)
