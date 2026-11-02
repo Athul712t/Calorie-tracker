@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Meal detail chat</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+button{font-family:inherit;cursor:pointer}
+.noscroll{scrollbar-width:none}
+.noscroll::-webkit-scrollbar{display:none}
+.press:hover{filter:brightness(0.97)}
+.press:focus-visible{outline:2px solid #14181F;outline-offset:2px}
+.chat-pill:focus-within{outline:2px solid #3B82F6;outline-offset:2px}
+.chat-input{font-family:inherit;outline:0}
+.chat-input::placeholder{color:#8A94A3}
+input[type=range]{width:100%;margin:0;accent-color:#3B82F6;height:28px}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; display: flex; flex-direction: column; background: #F7F8FA; font-family: 'DM Sans', system-ui, sans-serif; color: #14181F; overflow: hidden">
+
+  <header style="flex: none; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; padding: 20px 20px 8px">
+    <a class="press" href="Main.dc.html" aria-label="Back to Home" style="width: 44px; height: 44px; border-radius: 50%; border: 1px solid #E6E9EE; background: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #14181F; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </a>
+    <h1 style="margin: 0; text-align: center; font-size: 18px; font-weight: 700; letter-spacing: -0.01em">Meal</h1>
+    <span></span>
+  </header>
+
+  <main class="noscroll" style="flex: 1; min-height: 0; overflow-y: auto; padding-bottom: 150px">
+
+    <!-- conversation -->
+    <section aria-label="Conversation" style="margin: 8px 20px 0; display: flex; flex-direction: column; gap: 10px">
+      <sc-for list="{{thread}}" as="t" hint-placeholder-count="2">
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <div style="align-self: flex-end; max-width: 86%; padding: 6px; border-radius: 20px 20px 6px 20px; background: #3B82F6; color: #FFFFFF">
+            <div style="display: {{t.photoShow}}; height: 96px; width: 220px; border-radius: 14px; overflow: hidden; background: linear-gradient(160deg, #F6EBDD 0%, #EAD6BC 100%)">
+              <svg viewBox="0 0 220 96" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Attached meal photo (placeholder illustration)" style="display: block">
+                <ellipse cx="110" cy="50" rx="78" ry="42" style="fill: #FFFFFF; opacity: 0.92"></ellipse>
+                <ellipse cx="110" cy="50" rx="62" ry="33" style="fill: #F4F1EC"></ellipse>
+                <ellipse cx="82" cy="49" rx="21" ry="14" style="fill: #E3A93A"></ellipse>
+                <ellipse cx="130" cy="41" rx="22" ry="14" style="fill: #D9B27C"></ellipse>
+                <ellipse cx="144" cy="58" rx="21" ry="13" style="fill: #CFA56C"></ellipse>
+                <ellipse cx="104" cy="68" rx="18" ry="9" style="fill: #E58A3C"></ellipse>
+              </svg>
+            </div>
+            <div style="padding: 8px 10px 6px; font-size: 15px; line-height: 1.4">{{t.u}}</div>
+          </div>
+          <div style="display: flex; align-items: flex-start; gap: 8px; max-width: 92%">
+            <span aria-hidden="true" style="flex: none; width: 28px; height: 28px; border-radius: 50%; background: #E9EFFD; display: flex; align-items: center; justify-content: center">
+              <svg width="15" height="15" viewBox="0 0 24 24" style="fill: none; stroke: #2563EB; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"></path></svg>
+            </span>
+            <div style="padding: 10px 14px; border-radius: 6px 20px 20px 20px; background: #FFFFFF; border: 1px solid #ECEEF2; font-size: 14px; line-height: 1.5; color: #3A4352">
+              {{t.a}}
+              <div style="display: {{t.deltaShow}}; margin-top: 8px"><span style="display: inline-block; padding: 3px 10px; border-radius: 999px; background: {{t.deltaBg}}; color: {{t.deltaColor}}; font-size: 12px; font-weight: 700">{{t.delta}}</span></div>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </section>
+
+    <!-- title -->
+    <div style="margin: 20px 24px 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+      <div style="min-width: 0">
+        <div style="font-size: 22px; font-weight: 700; letter-spacing: -0.02em">{{title}}</div>
+        <div style="margin-top: 2px; font-size: 13px; color: #5F6B7A">Today · 1:15 PM</div>
+      </div>
+      <button class="press" aria-pressed="{{fav.on}}" aria-label="{{fav.label}}" onClick="{{toggleFav}}" style="flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #E6E9EE; background: #FFFFFF; display: flex; align-items: center; justify-content: center">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="fill: {{fav.fill}}; stroke: {{fav.stroke}}; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2z"></path></svg>
+      </button>
+    </div>
+    <!-- nutrition -->
+    <section aria-label="Nutrition" style="margin: 16px 20px 0; padding: 18px; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 28px; box-shadow: 0 1px 2px rgba(16,24,40,0.04)">
+      <div style="display: flex; align-items: flex-end; justify-content: space-between">
+        <div style="display: flex; align-items: baseline; gap: 6px">
+          <span style="font-size: 44px; font-weight: 700; letter-spacing: -0.03em; line-height: 1">{{nut.kcal}}</span>
+          <span style="font-size: 15px; font-weight: 500; color: #5F6B7A">kcal</span>
+        </div>
+        <span style="padding: 4px 10px; border-radius: 999px; background: #F1F3F6; color: #3A4352; font-size: 12px; font-weight: 600">{{nut.pctDay}} of daily goal</span>
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 16px">
+        <sc-for list="{{nut.macros}}" as="m" hint-placeholder-count="3">
+          <div style="flex: 1; padding: 10px 12px; border-radius: 16px; background: {{m.tint}}">
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: {{m.deep}}"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{m.dot}}"></span>{{m.name}}</div>
+            <div style="margin-top: 4px; font-size: 18px; font-weight: 700">{{m.g}} g</div>
+            <div style="margin-top: 6px; height: 4px; border-radius: 999px; background: rgba(20,24,31,0.08)"><div style="width: {{m.w}}; height: 100%; border-radius: 999px; background: {{m.dot}}"></div></div>
+            <div style="margin-top: 4px; font-size: 11px; color: #5F6B7A">{{m.pct}} of day</div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- meal type + portion -->
+    <section aria-label="Meal type and portion" style="position: relative; margin: 12px 20px 0; padding: 12px 18px; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 28px; box-shadow: 0 1px 2px rgba(16,24,40,0.04); display: flex; align-items: center; justify-content: space-between; gap: 12px">
+      <div style="position: relative">
+        <button class="press" onClick="{{toggleType}}" aria-haspopup="listbox" aria-expanded="{{typeOpen}}" aria-label="Meal type, {{typeLabel}}" style="height: 44px; padding: 0 14px 0 18px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #E3E7EC; border-radius: 999px; background: #F7F8FA; font-size: 15px; font-weight: 700; color: #14181F">
+          {{typeLabel}}
+          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #5F6B7A; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+        <div style="display: {{typeShow}}; position: fixed; inset: 0; z-index: 8" onClick="{{toggleType}}"></div>
+        <div role="listbox" aria-label="Meal type" style="display: {{typeShow}}; position: absolute; top: 50px; left: 0; z-index: 9; width: 180px; padding: 6px; flex-direction: column; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 18px; box-shadow: 0 12px 32px rgba(16,24,40,0.16)">
+          <sc-for list="{{types}}" as="t" hint-placeholder-count="4">
+            <button role="option" aria-selected="{{t.on}}" class="press" onClick="{{t.pick}}" style="height: 42px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; border: 0; border-radius: 12px; background: {{t.bg}}; font-size: 15px; font-weight: 500; color: #14181F; text-align: left">
+              {{t.label}}
+              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="display: {{t.checkShow}}; fill: none; stroke: #2563EB; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <label for="portion-input" style="font-size: 14px; font-weight: 600; color: #5F6B7A">Portion</label>
+        <div class="chat-pill" style="display: flex; align-items: center; gap: 4px; height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid #E3E7EC; background: #F7F8FA">
+          <input id="portion-input" type="text" inputmode="decimal" value="{{ptext}}" onInput="{{onPortionText}}" aria-label="Portion multiplier, 1 is as eaten" style="width: 40px; border: 0; background: transparent; padding: 0; font-family: inherit; font-size: 17px; font-weight: 700; text-align: right; color: #14181F; outline: 0">
+          <span style="font-size: 15px; font-weight: 600; color: #5F6B7A">×</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- items -->
+    <section aria-label="What is in it" style="margin: 12px 20px 0; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 28px; box-shadow: 0 1px 2px rgba(16,24,40,0.04); overflow: hidden">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; padding: 18px 18px 8px">
+        <h2 style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -0.01em">What is in it</h2>
+        <span style="font-size: 13px; color: #5F6B7A">{{itemCount}}</span>
+      </div>
+      <sc-for list="{{items}}" as="it" hint-placeholder-count="3">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 18px; border-top: 1px solid #F0F2F5">
+          <div style="flex: 1; min-width: 0">
+            <div style="font-size: 15px; font-weight: 600">{{it.name}}</div>
+            <div style="font-size: 13px; color: #5F6B7A">{{it.amount}}</div>
+          </div>
+          <div style="font-size: 15px; font-weight: 700">{{it.k}} <span style="font-size: 12px; font-weight: 500; color: #5F6B7A">kcal</span></div>
+          <button class="press" onClick="{{it.remove}}" aria-label="{{it.removeLabel}}" style="flex: none; width: 36px; height: 36px; border: 0; border-radius: 50%; background: transparent; display: flex; align-items: center; justify-content: center">
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #8A94A3; stroke-width: 2.2; stroke-linecap: round"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg>
+          </button>
+        </div>
+      </sc-for>
+    </section>
+
+  </main>
+
+  <!-- floating edit bar -->
+  <footer style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; flex-direction: column; padding: 44px 0 22px; background: linear-gradient(180deg, #F7F8FA00 0%, #F7F8FA 42%); pointer-events: none">
+    <!-- closed: chat icon + wide Done -->
+    <div style="display: {{closedShow}}; align-items: center; gap: 12px; padding: 0 16px; pointer-events: auto">
+      <button class="press" onClick="{{openChat}}" aria-label="Edit with chat" style="flex: none; width: 56px; height: 56px; border-radius: 50%; border: 1px solid #ECECEF; background: #FFFFFF; box-shadow: 0 6px 24px rgba(59,130,246,0.18); display: flex; align-items: center; justify-content: center">
+        <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #3B82F6; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round"><path d="M20 12a8 8 0 0 1-11.7 7.1L4 20l.9-4.1A8 8 0 1 1 20 12z"></path><path d="M12 8.2l.9 2.2 2.2.9-2.2.9-.9 2.2-.9-2.2-2.2-.9 2.2-.9z"></path></svg>
+      </button>
+      <a class="press" href="Main.dc.html" aria-label="Done, save this meal" style="flex: 1; min-width: 0; height: 56px; border-radius: 999px; background: #14181F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 17px; font-weight: 700; text-decoration: none; box-shadow: 0 8px 24px rgba(20,24,31,0.28)">
+        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #FFFFFF; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+        Done · {{nut.kcal}} kcal
+      </a>
+    </div>
+    <!-- open: input + compact Done -->
+    <form onSubmit="{{onSend}}" style="display: {{openShow}}; align-items: center; gap: 12px; padding: 0 16px; pointer-events: auto">
+      <button type="button" class="press" aria-label="Add a photo" style="flex: none; width: 56px; height: 56px; border-radius: 50%; border: 1px solid #ECECEF; background: #FFFFFF; box-shadow: 0 6px 24px rgba(59,130,246,0.18); display: flex; align-items: center; justify-content: center">
+        <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #6B7280; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.2l1.1-1.6A1 1 0 0 1 9.6 4h4.8a1 1 0 0 1 .8.4L16.3 6h1.2A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z"></path><circle cx="12" cy="12.5" r="3.2"></circle></svg>
+      </button>
+      <div class="chat-pill" style="flex: 1; min-width: 0; height: 56px; display: flex; align-items: center; gap: 6px; padding: 0 6px 0 20px; border-radius: 28px; border: 1px solid #ECECEF; background: #FFFFFF; box-shadow: 0 6px 24px rgba(59,130,246,0.18)">
+        <input class="chat-input" type="text" aria-label="Tell me what to change" placeholder="Tell me what to change..." value="{{draft}}" onInput="{{onDraft}}" style="flex: 1; min-width: 0; height: 100%; border: 0; background: transparent; padding: 0; font-size: 16px; color: #14181F">
+        <button type="submit" class="press" aria-label="Send" style="flex: none; width: 40px; height: 40px; border-radius: 50%; border: 0; background: transparent; display: flex; align-items: center; justify-content: center">
+          <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #3B82F6; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg>
+        </button>
+      </div>
+      <a class="press" href="Main.dc.html" aria-label="Done, save this meal" style="flex: none; width: 56px; height: 56px; border-radius: 50%; background: #14181F; display: flex; align-items: center; justify-content: center; text-decoration: none; box-shadow: 0 8px 24px rgba(20,24,31,0.28)">
+        <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #FFFFFF; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+      </a>
+    </form>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const DAY = { k: 2000, p: 120, c: 230, f: 65 };
+
+    const INIT = [
+      { key: 'dal', name: 'Dal tadka', base: 180, unit: 'g', k: 160, p: 8, c: 22, f: 5, mult: 1 },
+      { key: 'roti', name: 'Roti', base: 2, unit: 'pc', k: 200, p: 6, c: 38, f: 2, mult: 1 },
+      { key: 'bhurji', name: 'Paneer bhurji', base: 120, unit: 'g', k: 260, p: 14, c: 7, f: 20, mult: 1 }
+    ];
+    const EXTRAS = {
+      buttermilk: { name: 'Buttermilk', base: 200, unit: 'ml', k: 60, p: 3, c: 5, f: 2 },
+      curd: { name: 'Curd', base: 100, unit: 'g', k: 60, p: 4, c: 5, f: 3 },
+      rice: { name: 'Rice', base: 150, unit: 'g', k: 195, p: 4, c: 43, f: 0 },
+      salad: { name: 'Salad', base: 100, unit: 'g', k: 25, p: 1, c: 5, f: 0 },
+      ghee: { name: 'Ghee', base: 5, unit: 'g', k: 45, p: 0, c: 0, f: 5 }
+    };
+    const SYN = {
+      dal: /dal|daal/, roti: /roti|chapati|chapatti|phulka/, bhurji: /bhurji|paneer/,
+      buttermilk: /buttermilk|chaas|chas|lassi/, curd: /curd|dahi|yogurt|yoghurt/,
+      rice: /rice|chawal/, salad: /salad/, ghee: /ghee/
+    };
+
+    const items = st.items || INIT;
+    const portion = st.portion != null ? st.portion : 1;
+    const type = st.type != null ? st.type : 1;
+    const fav = !!st.fav;
+    const edits = st.edits || [];
+    const draft = st.draft || '';
+    const ptext = st.ptext != null ? st.ptext : String(portion);
+    const typeOpen = !!st.typeOpen;
+    const chatOpen = !!st.chatOpen;
+    const TYPE_NAMES = ['Breakfast', 'Lunch', 'Snack', 'Dinner'];
+
+    const total = (list, pt) => list.reduce((s, it) => s + it.k * it.mult, 0) * pt;
+    const kcalNow = Math.round(total(items, portion));
+    const kcalInit = Math.round(total(INIT, 1));
+
+    const fmtAmt = (it) => {
+      const v = it.base * it.mult * portion;
+      const n = Number.isInteger(v) ? v : Math.round(v * 10) / 10;
+      if (it.unit === 'pc') return n + (n === 1 ? ' piece' : ' pieces');
+      return n + ' ' + it.unit;
+    };
+
+    // ---- apply a chat instruction ----
+    const apply = (raw) => {
+      const text = raw.trim().toLowerCase();
+      if (!text) return null;
+      let list = items.map((x) => Object.assign({}, x));
+      let pt = portion, ty = type;
+      let reply = null;
+      const hit = (it) => SYN[it.key] && SYN[it.key].test(text);
+      const nameOf = (it) => it.name.toLowerCase();
+
+      const mType = text.match(/\b(breakfast|lunch|snack|dinner)\b/);
+      const num = text.match(/(\d+)\s*(?:x\s*)?(roti|rotis|chapati|chapatis|phulka|phulkas)/);
+
+      if (/\b(remove|no|without|delete|skip|drop|take out)\b/.test(text) && list.some(hit)) {
+        const gone = list.filter(hit);
+        list = list.filter((it) => !hit(it));
+        reply = 'Removed ' + gone.map(nameOf).join(' and ') + '.';
+      } else if (/\b(add|also|plus|and|with|had)\b/.test(text) && Object.keys(EXTRAS).some((k) => SYN[k].test(text))) {
+        const k = Object.keys(EXTRAS).find((x) => SYN[x].test(text));
+        if (list.some((it) => it.key === k)) {
+          list.forEach((it) => { if (it.key === k) it.mult += 1; });
+          reply = 'Added another serving of ' + EXTRAS[k].name.toLowerCase() + '.';
+        } else {
+          list.push(Object.assign({ key: k, mult: 1 }, EXTRAS[k]));
+          reply = 'Added ' + EXTRAS[k].name.toLowerCase() + ' (' + EXTRAS[k].base + ' ' + EXTRAS[k].unit + ').';
+        }
+      } else if (num) {
+        const n = parseInt(num[1], 10);
+        list.forEach((it) => { if (it.key === 'roti') it.mult = n / it.base; });
+        reply = 'Set rotis to ' + n + '.';
+      } else if (/\b(double|twice)\b/.test(text) || /\b(extra|more|bigger|larger|big)\b/.test(text) || /\b(half|smaller|less|little|small)\b/.test(text)) {
+        const f = /\b(double|twice)\b/.test(text) ? 2 : (/\bhalf\b/.test(text) ? 0.5 : (/\b(smaller|less|little|small)\b/.test(text) ? 0.75 : 1.5));
+        const target = list.filter(hit);
+        if (target.length) {
+          target.forEach((it) => { it.mult = it.mult * f; });
+          reply = 'Made the ' + target.map(nameOf).join(' and ') + (f > 1 ? ' bigger' : ' smaller') + '.';
+        } else {
+          pt = Math.min(2, Math.max(0.5, Math.round(pt * f * 4) / 4));
+          reply = 'Changed the whole portion to ' + pt + '×.';
+        }
+      } else if (mType) {
+        ty = ['breakfast', 'lunch', 'snack', 'dinner'].indexOf(mType[1]);
+        reply = 'Moved this to ' + mType[1] + '.';
+      }
+      if (reply === null) {
+        return { u: raw.trim(), a: 'I could not tell what to change. Try “remove roti”, “add buttermilk”, “smaller dal” or “3 rotis”.', delta: null, keep: false };
+      }
+      const after = Math.round(total(list, pt));
+      const d = after - kcalNow;
+      return { u: raw.trim(), a: reply + ' That is ' + after.toLocaleString('en-IN') + ' kcal now.', delta: d, keep: true, list: list, pt: pt, ty: ty };
+    };
+
+    const send = (raw) => {
+      const r = apply(raw);
+      if (!r) return;
+      const entry = { u: r.u, a: r.a, delta: r.delta };
+      const next = { edits: edits.concat([entry]), draft: '' };
+      if (r.keep) { next.items = r.list; next.portion = r.pt; next.type = r.ty; next.ptext = String(r.pt); }
+      this.setState(next);
+    };
+
+    // ---- thread ----
+    const first = {
+      u: '2 rotis with paneer bhurji', a: 'I found 3 items, about ' + kcalInit.toLocaleString('en-IN') + ' kcal. Tell me what to change, or tap Done to save it.',
+      photoShow: 'block', deltaShow: 'none', delta: '', deltaBg: '#F1F3F6', deltaColor: '#3A4352'
+    };
+    const thread = [first].concat(edits.map((e) => {
+      const has = e.delta != null && e.delta !== 0;
+      return {
+        u: e.u, a: e.a, photoShow: 'none',
+        deltaShow: has ? 'block' : 'none',
+        delta: has ? (e.delta < 0 ? '−' : '+') + Math.abs(e.delta) + ' kcal' : '',
+        deltaBg: has && e.delta < 0 ? '#E8F6EF' : '#FDF3E3',
+        deltaColor: has && e.delta < 0 ? '#14784C' : '#8A4F05'
+      };
+    }));
+
+    // ---- card ----
+    const sum = (key) => items.reduce((s, it) => s + it[key] * it.mult, 0) * portion;
+    const mk = (name, key, dot, deep, tint) => {
+      const g = Math.round(sum(key));
+      const p = g / DAY[key];
+      return { name: name, g: g, dot: dot, deep: deep, tint: tint, pct: Math.round(p * 100) + '%', w: Math.min(p, 1) * 100 + '%' };
+    };
+    const nut = {
+      kcal: kcalNow.toLocaleString('en-IN'),
+      pctDay: Math.round(kcalNow / DAY.k * 100) + '%',
+      macros: [
+        mk('Protein', 'p', '#3B6FE8', '#2548B8', '#EEF3FE'),
+        mk('Carbs', 'c', '#D97706', '#8A4F05', '#FDF3E3'),
+        mk('Fat', 'f', '#8B5CF6', '#6D3BD2', '#F3EEFE')
+      ]
+    };
+    const rows = items.map((it, i) => ({
+      name: it.name, amount: fmtAmt(it), k: Math.round(it.k * it.mult * portion),
+      removeLabel: 'Remove ' + it.name,
+      remove: () => this.setState({ items: items.filter((_, j) => j !== i) })
+    }));
+    const types = TYPE_NAMES.map((l, i) => ({
+      label: l, on: i === type,
+      bg: i === type ? '#F1F3F6' : 'transparent',
+      checkShow: i === type ? 'block' : 'none',
+      pick: () => this.setState({ type: i, typeOpen: false })
+    }));
+
+    const names = items.map((it) => it.name.replace(' tadka', '').toLowerCase());
+    const title = items.length ? (items.map((it) => it.name.replace(' tadka', '')).join(', ')) : 'Empty meal';
+
+    return {
+      thread: thread, title: title, nut: nut, items: rows,
+      itemCount: rows.length + (rows.length === 1 ? ' item' : ' items'),
+      types: types,
+      ptext: ptext,
+      onPortionText: (e) => {
+        const v = e.target.value;
+        const n = parseFloat(v.replace(',', '.'));
+        if (isFinite(n) && n >= 0.25 && n <= 5) this.setState({ portion: n, ptext: v });
+        else this.setState({ ptext: v });
+      },
+      typeLabel: TYPE_NAMES[type], typeOpen: typeOpen, typeShow: typeOpen ? 'flex' : 'none',
+      toggleType: () => this.setState({ typeOpen: !typeOpen }),
+      fav: { on: fav, label: fav ? 'Remove from favourites' : 'Save as favourite', fill: fav ? '#E5484D' : 'none', stroke: fav ? '#E5484D' : '#14181F' },
+      toggleFav: () => this.setState({ fav: !fav }),
+      draft: draft,
+      closedShow: chatOpen ? 'none' : 'flex',
+      openShow: chatOpen ? 'flex' : 'none',
+      openChat: () => this.setState({ chatOpen: true }),
+      closeChat: () => this.setState({ chatOpen: false, draft: '' }),
+      onDraft: (e) => this.setState({ draft: e.target.value }),
+      onSend: (e) => { if (e && e.preventDefault) e.preventDefault(); send(draft); }
+    };
+  }
+}
+</script>
+</body>
+</html>

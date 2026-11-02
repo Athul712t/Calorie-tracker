@@ -8,9 +8,9 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.example.ui.CalorieTrackerScreen
 import com.example.ui.CalorieTrackerViewModel
-import com.example.ui.theme.CanvasBackground
+import com.example.ui.nav.AppNavHost
+import com.example.ui.theme.AppColors
 import com.example.ui.theme.MyApplicationTheme
 import com.example.util.configureAppCheck
 
@@ -32,9 +32,9 @@ class MainActivity : ComponentActivity() {
             MyApplicationTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = CanvasBackground
+                    color = AppColors.Background
                 ) {
-                    CalorieTrackerScreen(viewModel = viewModel)
+                    AppNavHost(viewModel = viewModel)
                 }
             }
         }
