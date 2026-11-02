@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Meal detail</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+button{font-family:inherit;cursor:pointer}
+.noscroll{scrollbar-width:none}
+.noscroll::-webkit-scrollbar{display:none}
+.press:hover{filter:brightness(0.97)}
+.press:focus-visible{outline:2px solid #14181F;outline-offset:2px}
+input[type=range]{width:100%;margin:0;accent-color:#3B82F6;height:28px}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; display: flex; flex-direction: column; background: #F7F8FA; font-family: 'DM Sans', system-ui, sans-serif; color: #14181F; overflow: hidden">
+
+  <header style="flex: none; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; padding: 20px 20px 8px">
+    <a class="press" href="Main.dc.html" aria-label="Back to Home" style="width: 44px; height: 44px; border-radius: 50%; border: 1px solid #E6E9EE; background: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #14181F; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </a>
+    <h1 style="margin: 0; text-align: center; font-size: 18px; font-weight: 700; letter-spacing: -0.01em">Meal</h1>
+    <button class="press" aria-pressed="{{fav.on}}" aria-label="{{fav.label}}" onClick="{{toggleFav}}" style="justify-self: end; width: 44px; height: 44px; border-radius: 50%; border: 1px solid #E6E9EE; background: #FFFFFF; display: flex; align-items: center; justify-content: center">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="fill: {{fav.fill}}; stroke: {{fav.stroke}}; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2z"></path></svg>
+    </button>
+  </header>
+
+  <main class="noscroll" style="flex: 1; min-height: 0; overflow-y: auto; padding-bottom: 120px">
+
+    <!-- photo -->
+    <div style="position: relative; margin: 8px 20px 0; height: 170px; border-radius: 28px; overflow: hidden; background: linear-gradient(160deg, #F6EBDD 0%, #EAD6BC 100%)">
+      <svg viewBox="0 0 350 170" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Meal photo (placeholder illustration): a plate with dal, two rotis and paneer bhurji" style="display: block">
+        <ellipse cx="175" cy="88" rx="118" ry="70" style="fill: #FFFFFF; opacity: 0.92"></ellipse>
+        <ellipse cx="175" cy="88" rx="96" ry="55" style="fill: #F4F1EC"></ellipse>
+        <ellipse cx="128" cy="86" rx="34" ry="24" style="fill: #E3A93A"></ellipse>
+        <ellipse cx="128" cy="84" rx="26" ry="17" style="fill: #EDBB55"></ellipse>
+        <ellipse cx="205" cy="70" rx="36" ry="24" style="fill: #D9B27C"></ellipse>
+        <ellipse cx="226" cy="98" rx="34" ry="22" style="fill: #CFA56C"></ellipse>
+        <ellipse cx="160" cy="116" rx="30" ry="15" style="fill: #E58A3C"></ellipse>
+      </svg>
+      <span style="position: absolute; left: 14px; bottom: 12px; padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,0.9); font-size: 12px; font-weight: 600; color: #3A4352">AI estimate · from photo</span>
+    </div>
+
+    <!-- title -->
+    <div style="margin: 18px 24px 0">
+      <div style="font-size: 22px; font-weight: 700; letter-spacing: -0.02em">Dal, 2 rotis, paneer bhurji</div>
+      <div style="margin-top: 2px; font-size: 13px; color: #5F6B7A">Today · 1:15 PM</div>
+      <div role="group" aria-label="Meal type" style="display: flex; gap: 2px; margin-top: 12px; padding: 3px; background: #ECEFF3; border-radius: 999px">
+        <sc-for list="{{types}}" as="t" hint-placeholder-count="4">
+          <button class="press" aria-pressed="{{t.on}}" onClick="{{t.pick}}" style="flex: 1; height: 34px; border: 0; border-radius: 999px; background: {{t.bg}}; color: {{t.color}}; box-shadow: {{t.shadow}}; font-size: 13px; font-weight: 600">{{t.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- calories + macros -->
+    <section aria-label="Nutrition" style="margin: 16px 20px 0; padding: 18px; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 28px; box-shadow: 0 1px 2px rgba(16,24,40,0.04)">
+      <div style="display: flex; align-items: flex-end; justify-content: space-between">
+        <div style="display: flex; align-items: baseline; gap: 6px">
+          <span style="font-size: 44px; font-weight: 700; letter-spacing: -0.03em; line-height: 1">{{nut.kcal}}</span>
+          <span style="font-size: 15px; font-weight: 500; color: #5F6B7A">kcal</span>
+        </div>
+        <span style="padding: 4px 10px; border-radius: 999px; background: #F1F3F6; color: #3A4352; font-size: 12px; font-weight: 600">{{nut.pctDay}} of daily goal</span>
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 16px">
+        <sc-for list="{{nut.macros}}" as="m" hint-placeholder-count="3">
+          <div style="flex: 1; padding: 10px 12px; border-radius: 16px; background: {{m.tint}}">
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: {{m.deep}}"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{m.dot}}"></span>{{m.name}}</div>
+            <div style="margin-top: 4px; font-size: 18px; font-weight: 700">{{m.g}} g</div>
+            <div style="margin-top: 6px; height: 4px; border-radius: 999px; background: rgba(20,24,31,0.08)"><div style="width: {{m.w}}; height: 100%; border-radius: 999px; background: {{m.dot}}"></div></div>
+            <div style="margin-top: 4px; font-size: 11px; color: #5F6B7A">{{m.pct}} of day</div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- portion -->
+    <section aria-label="Portion size" style="margin: 12px 20px 0; padding: 18px; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 28px; box-shadow: 0 1px 2px rgba(16,24,40,0.04)">
+      <div style="display: flex; align-items: baseline; justify-content: space-between">
+        <h2 style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -0.01em">Portion</h2>
+        <span style="font-size: 15px; font-weight: 700">{{portion.label}}</span>
+      </div>
+      <input type="range" min="0.5" max="2" step="0.25" value="{{portion.value}}" onInput="{{onPortion}}" aria-label="Portion size" aria-valuetext="{{portion.label}}" style="margin-top: 8px">
+      <div style="display: flex; justify-content: space-between; font-size: 12px; color: #5F6B7A"><span>Half</span><span>As eaten</span><span>Double</span></div>
+    </section>
+
+    <!-- ingredients -->
+    <section aria-label="What is in it" style="margin: 12px 20px 0; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 28px; box-shadow: 0 1px 2px rgba(16,24,40,0.04); overflow: hidden">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; padding: 18px 18px 8px">
+        <h2 style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -0.01em">What is in it</h2>
+        <span style="font-size: 13px; color: #5F6B7A">{{itemCount}}</span>
+      </div>
+      <sc-for list="{{items}}" as="it" hint-placeholder-count="3">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 18px; border-top: 1px solid #F0F2F5">
+          <div style="flex: 1; min-width: 0">
+            <div style="font-size: 15px; font-weight: 600">{{it.name}}</div>
+            <div style="font-size: 13px; color: #5F6B7A">{{it.amount}}</div>
+          </div>
+          <div style="font-size: 15px; font-weight: 700">{{it.k}} <span style="font-size: 12px; font-weight: 500; color: #5F6B7A">kcal</span></div>
+          <button class="press" onClick="{{it.remove}}" aria-label="{{it.removeLabel}}" style="flex: none; width: 36px; height: 36px; border: 0; border-radius: 50%; background: transparent; display: flex; align-items: center; justify-content: center">
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #8A94A3; stroke-width: 2.2; stroke-linecap: round"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg>
+          </button>
+        </div>
+      </sc-for>
+      <button class="press" style="width: 100%; height: 52px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-top: 1px solid #F0F2F5; background: transparent; font-size: 14px; font-weight: 600; color: #2563EB">
+        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #2563EB; stroke-width: 2.4; stroke-linecap: round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+        Add an item
+      </button>
+    </section>
+
+    <p style="margin: 14px 28px 0; font-size: 13px; line-height: 1.45; color: #5F6B7A">Estimated from your photo. If something looks off, remove it or change the portion and the totals update.</p>
+
+    <div style="display: flex; justify-content: center; margin-top: 8px">
+      <button class="press" style="height: 44px; padding: 0 16px; border: 0; background: transparent; font-size: 14px; font-weight: 600; color: #C42B36">Delete meal</button>
+    </div>
+
+  </main>
+
+  <footer style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; padding: 40px 20px 24px; background: linear-gradient(180deg, #F7F8FA00 0%, #F7F8FA 45%); pointer-events: none">
+    <a class="press" href="Main.dc.html" style="pointer-events: auto; height: 56px; border-radius: 999px; background: #14181F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; text-decoration: none; box-shadow: 0 8px 24px rgba(20,24,31,0.24)">Save changes</a>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const portion = st.portion != null ? st.portion : 1;
+    const type = st.type != null ? st.type : 1;
+    const fav = !!st.fav;
+    const removed = st.removed || [];
+    const DAY = { k: 2000, p: 120, c: 230, f: 65 };
+
+    const ITEMS = [
+      { name: 'Dal tadka', base: 180, unit: 'g', k: 160, p: 8, c: 22, f: 5 },
+      { name: 'Roti', base: 2, unit: 'pc', k: 200, p: 6, c: 38, f: 2 },
+      { name: 'Paneer bhurji', base: 120, unit: 'g', k: 260, p: 14, c: 7, f: 20 }
+    ];
+    const kept = ITEMS.map((it, i) => ({ it: it, i: i })).filter((x) => removed.indexOf(x.i) < 0);
+    const sum = (key) => kept.reduce((s, x) => s + x.it[key], 0) * portion;
+    const kcal = Math.round(sum('k'));
+
+    const fmtAmt = (it) => {
+      const v = it.base * portion;
+      const n = Number.isInteger(v) ? v : Math.round(v * 10) / 10;
+      return it.unit === 'pc' ? n + (n === 1 ? ' piece' : ' pieces') : n + ' g';
+    };
+    const items = kept.map((x) => ({
+      name: x.it.name,
+      amount: fmtAmt(x.it),
+      k: Math.round(x.it.k * portion),
+      removeLabel: 'Remove ' + x.it.name,
+      remove: () => this.setState({ removed: removed.concat([x.i]) })
+    }));
+
+    const mk = (name, key, dot, deep, tint) => {
+      const g = Math.round(sum(key));
+      const p = g / DAY[key];
+      return { name: name, g: g, dot: dot, deep: deep, tint: tint,
+        pct: Math.round(p * 100) + '%', w: Math.min(p, 1) * 100 + '%' };
+    };
+    const nut = {
+      kcal: kcal.toLocaleString('en-IN'),
+      pctDay: Math.round(kcal / DAY.k * 100) + '%',
+      macros: [
+        mk('Protein', 'p', '#3B6FE8', '#2548B8', '#EEF3FE'),
+        mk('Carbs', 'c', '#D97706', '#8A4F05', '#FDF3E3'),
+        mk('Fat', 'f', '#8B5CF6', '#6D3BD2', '#F3EEFE')
+      ]
+    };
+
+    const types = ['Breakfast', 'Lunch', 'Snack', 'Dinner'].map((l, i) => ({
+      label: l, on: i === type,
+      bg: i === type ? '#FFFFFF' : 'transparent',
+      color: i === type ? '#14181F' : '#5F6B7A',
+      shadow: i === type ? '0 1px 3px rgba(16,24,40,0.10)' : 'none',
+      pick: () => this.setState({ type: i })
+    }));
+
+    const label = portion === 1 ? '1× as eaten' : (portion < 1 ? portion + '×' : portion + '×');
+    return {
+      nut: nut, items: items,
+      itemCount: items.length + (items.length === 1 ? ' item' : ' items'),
+      types: types,
+      portion: { value: portion, label: label },
+      fav: { on: fav, label: fav ? 'Remove from favourites' : 'Save as favourite', fill: fav ? '#E5484D' : 'none', stroke: fav ? '#E5484D' : '#14181F' },
+      toggleFav: () => this.setState({ fav: !fav }),
+      onPortion: (e) => this.setState({ portion: parseFloat(e.target.value) })
+    };
+  }
+}
+</script>
+</body>
+</html>

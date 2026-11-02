@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Progress</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+button{font-family:inherit;cursor:pointer}
+.noscroll{scrollbar-width:none}
+.noscroll::-webkit-scrollbar{display:none}
+.press:hover{filter:brightness(0.97)}
+.chat-pill:focus-within{outline:2px solid #3B82F6;outline-offset:2px}
+.chat-input{font-family:inherit;outline:0}
+.chat-input::placeholder{color:#8A94A3}
+.press:focus-visible{outline:2px solid #14181F;outline-offset:2px}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; display: flex; flex-direction: column; background: #F7F8FA; font-family: 'DM Sans', system-ui, sans-serif; color: #14181F; overflow: hidden">
+
+  <header style="flex: none; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 20px 20px 8px">
+    <svg width="44" height="44" viewBox="0 0 44 44" role="img" aria-label="App logo" style="justify-self: start; display: block">
+      <rect width="44" height="44" rx="14" style="fill: #14181f"></rect>
+      <circle cx="22" cy="22" r="10" transform="rotate(-90 22 22)" style="fill: none; stroke: #FFFFFF; stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 47.1 62.83"></circle>
+      <circle cx="22" cy="22" r="3.2" style="fill: #22A672"></circle>
+    </svg>
+    <nav aria-label="View" style="justify-self: center; display: flex; gap: 4px; padding: 4px; background: #ECEFF3; border-radius: 999px">
+      <a class="press" href="Main.dc.html" style="display: inline-flex; align-items: center; height: 36px; padding: 0 20px; border-radius: 999px; background: transparent; color: #5F6B7A; font-size: 14px; font-weight: 600; text-decoration: none">Home</a>
+      <a class="press" href="Progress.dc.html" aria-current="page" style="display: inline-flex; align-items: center; height: 36px; padding: 0 20px; border-radius: 999px; background: #FFFFFF; color: #14181F; font-size: 14px; font-weight: 600; text-decoration: none; box-shadow: 0 1px 3px rgba(16,24,40,0.10)">Progress</a>
+    </nav>
+    <a class="press" href="ProfileSimple.dc.html" aria-label="Profile and settings" style="justify-self: end; width: 44px; height: 44px; border-radius: 50%; border: 1px solid #E6E9EE; background: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #14181F; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c0.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"></path></svg>
+    </a>
+  </header>
+
+  <main class="noscroll" style="flex: 1; min-height: 0; overflow-y: auto; padding-bottom: 130px">
+
+    <section aria-label="Insights" style="margin: 12px 20px 0; padding: 18px; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 28px; box-shadow: 0 1px 2px rgba(16,24,40,0.04)">
+      <div style="display: flex; align-items: center; justify-content: space-between">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #3B82F6; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"></path><path d="M19 16v4"></path><path d="M17 18h4"></path></svg>
+          <h2 style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -0.01em">Insights</h2>
+        </div>
+        <button class="press" onClick="{{toggleInsights}}" aria-expanded="{{ins.expanded}}" aria-label="{{ins.toggleLabel}}" style="width: 32px; height: 32px; border: 0; border-radius: 50%; background: #F1F3F6; display: flex; align-items: center; justify-content: center">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #3A4352; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; transform: {{ins.rot}}"><path d="M15 3h6v6"></path><path d="M9 21H3v-6"></path><path d="M21 3l-7 7"></path><path d="M3 21l7-7"></path></svg>
+        </button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 14px">
+        <sc-for list="{{insightItems}}" as="i" hint-placeholder-count="2">
+          <div style="display: flex; align-items: flex-start; gap: 12px">
+            <span style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: {{i.bg}}; display: flex; align-items: center; justify-content: center">
+              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: {{i.fg}}; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="{{i.icon}}"></path></svg>
+            </span>
+            <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #3A4352">{{i.text}}</p>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display: {{askedShow}}; flex-direction: column; align-items: flex-end; gap: 8px; margin-top: 16px">
+        <p style="margin: 0; max-width: 85%; padding: 10px 14px; border-radius: 18px 18px 4px 18px; background: #3B82F6; color: #FFFFFF; font-size: 14px; line-height: 1.45">{{asked}}</p>
+        <p style="margin: 0; align-self: flex-start; max-width: 90%; padding: 10px 14px; border-radius: 18px 18px 18px 4px; background: #F1F3F6; color: #3A4352; font-size: 14px; line-height: 1.5">Good question. Looking at your last 7 days, you are close to your calorie goal on most days, and the late-night snacks are the main thing pushing Tuesday and Friday over.</p>
+      </div>
+    </section>
+
+
+    <section aria-label="Weight progress" style="margin: 12px 20px 0; padding: 18px; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 28px; box-shadow: 0 1px 2px rgba(16,24,40,0.04)">
+      <div style="display: flex; align-items: center; justify-content: space-between">
+        <h2 style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -0.01em">Weight</h2>
+        <div role="group" aria-label="Time range" style="display: flex; gap: 2px; padding: 3px; background: #F1F3F6; border-radius: 999px">
+          <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+            <button class="press" aria-pressed="{{t.pressed}}" onClick="{{t.pick}}" style="height: 28px; padding: 0 12px; border: 0; border-radius: 999px; background: {{t.bg}}; color: {{t.color}}; box-shadow: {{t.shadow}}; font-size: 12px; font-weight: 600">{{t.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-top: 14px">
+        <div style="display: flex; align-items: baseline; gap: 4px">
+          <span style="font-size: 40px; font-weight: 700; letter-spacing: -0.03em; line-height: 1">{{wt.value}}</span>
+          <span style="font-size: 16px; font-weight: 500; color: #5F6B7A">kg</span>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px">
+          <span style="padding: 4px 10px; border-radius: 999px; background: #E8F6EF; color: #14784C; font-size: 13px; font-weight: 700">{{wt.chg}}</span>
+          <span style="font-size: 12px; color: #5F6B7A">{{wt.period}}</span>
+        </div>
+      </div>
+      <svg viewBox="0 0 314 132" width="314" height="132" role="img" aria-label="{{wt.aria}}" style="display: block; margin-top: 14px">
+        <line x1="0" y1="18" x2="314" y2="18" style="stroke: #EEF0F4; stroke-width: 1; stroke-dasharray: 3 4"></line>
+        <line x1="0" y1="66" x2="314" y2="66" style="stroke: #EEF0F4; stroke-width: 1; stroke-dasharray: 3 4"></line>
+        <line x1="0" y1="114" x2="314" y2="114" style="stroke: #EEF0F4; stroke-width: 1; stroke-dasharray: 3 4"></line>
+        <path d="{{wt.area}}" style="fill: rgba(34,166,114,0.12); stroke: none"></path>
+        <polyline points="{{wt.line}}" style="fill: none; stroke: #22A672; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round"></polyline>
+        <circle cx="{{wt.cx}}" cy="{{wt.cy}}" r="5.5" style="fill: #22A672; stroke: #FFFFFF; stroke-width: 3"></circle>
+      </svg>
+      <div style="display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; color: #5F6B7A">
+        <span>{{wt.from}}</span>
+        <span>{{wt.to}}</span>
+      </div>
+      <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #F0F2F5">
+        <div style="display: flex; justify-content: space-between; font-size: 13px">
+          <span style="color: #5F6B7A">Start 76.0 kg</span>
+          <span style="font-weight: 600">Goal 68 kg</span>
+        </div>
+        <div style="margin-top: 8px; height: 8px; border-radius: 999px; background: #EDF0F4">
+          <div style="width: {{goal.pct}}; height: 100%; border-radius: 999px; background: #22A672"></div>
+        </div>
+        <div style="margin-top: 8px; font-size: 13px; color: #5F6B7A">{{goal.text}}</div>
+      </div>
+    </section>
+
+    <section aria-label="Progress photos" style="margin: 12px 20px 0; padding: 18px; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 28px; box-shadow: 0 1px 2px rgba(16,24,40,0.04)">
+      <div style="display: flex; align-items: center; justify-content: space-between">
+        <div>
+          <h2 style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -0.01em">Progress photos</h2>
+          <div style="margin-top: 2px; font-size: 12px; color: #5F6B7A">Latest check-in · Oct 31</div>
+        </div>
+        <a class="press" href="Photos.dc.html" aria-label="See all progress photos" style="width: 36px; height: 36px; border-radius: 50%; background: #F1F3F6; display: flex; align-items: center; justify-content: center; text-decoration: none">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #14181F; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round"><path d="M9 5l7 7-7 7"></path></svg>
+        </a>
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 14px">
+        <sc-for list="{{thumbs}}" as="t" hint-placeholder-count="3">
+          <a class="press" href="Photos.dc.html" aria-label="{{t.openLabel}}" style="flex: 1; min-width: 0; text-decoration: none; color: inherit">
+            <div style="aspect-ratio: 3 / 4; border-radius: 16px; background: {{t.bg}}; overflow: hidden">
+              <svg viewBox="0 0 120 160" width="100%" height="100%" preserveAspectRatio="xMidYMax meet" role="img" aria-label="{{t.aria}}" style="display: block">
+                <rect x="{{t.l1x}}" y="104" width="{{t.l1w}}" height="52" rx="6" style="fill: {{t.fg}}"></rect>
+                <rect x="{{t.l2x}}" y="104" width="{{t.l2w}}" height="52" rx="6" style="fill: {{t.fg}}"></rect>
+                <rect x="{{t.a1x}}" y="48" width="{{t.aw}}" height="50" rx="4.5" style="fill: {{t.fg}}"></rect>
+                <rect x="{{t.a2x}}" y="48" width="{{t.aw}}" height="50" rx="4.5" style="fill: {{t.fg}}"></rect>
+                <rect x="{{t.tx}}" y="44" width="{{t.tw}}" height="64" rx="14" style="fill: {{t.fg}}"></rect>
+                <circle cx="{{t.hx}}" cy="28" r="13" style="fill: {{t.fg}}"></circle>
+              </svg>
+            </div>
+            <div style="margin-top: 6px; text-align: center; font-size: 12px; font-weight: 600; color: #3A4352">{{t.label}}</div>
+          </a>
+        </sc-for>
+        <div style="flex: 1; min-width: 0">
+          <button class="press" aria-label="Upload a photo" style="width: 100%; aspect-ratio: 3 / 4; border: 1.5px dashed #BFC6D0; border-radius: 16px; background: #FAFBFC; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 0">
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #3B82F6; stroke-width: 2.2; stroke-linecap: round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+            <span style="font-size: 12px; font-weight: 600; color: #3A4352">Upload</span>
+          </button>
+          <div style="margin-top: 6px; text-align: center; font-size: 12px; color: #5F6B7A">New</div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Calories this week" style="margin: 12px 20px 0; padding: 18px; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 28px; box-shadow: 0 1px 2px rgba(16,24,40,0.04)">
+      <div style="display: flex; align-items: center; justify-content: space-between">
+        <h2 style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -0.01em">Calories</h2>
+        <span style="font-size: 13px; font-weight: 500; color: #5F6B7A">This week</span>
+      </div>
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-top: 14px">
+        <div style="display: flex; align-items: baseline; gap: 4px">
+          <span style="font-size: 32px; font-weight: 700; letter-spacing: -0.03em; line-height: 1">{{cal.avg}}</span>
+          <span style="font-size: 14px; font-weight: 500; color: #5F6B7A">kcal avg</span>
+        </div>
+        <span style="padding: 4px 10px; border-radius: 999px; background: #F1F3F6; color: #3A4352; font-size: 12px; font-weight: 600">{{cal.onTarget}}</span>
+      </div>
+      <div role="img" aria-label="{{cal.chartAria}}" style="position: relative; margin-top: 18px; height: 128px">
+        <div style="position: absolute; left: 0; right: 0; bottom: {{cal.goalBottom}}; border-top: 1.5px dashed #BFC6D0"></div>
+        <span style="position: absolute; right: 0; bottom: {{cal.goalLabelBottom}}; padding: 0 4px; background: #FFFFFF; font-size: 11px; font-weight: 600; color: #5F6B7A">{{cal.goalLabel}}</span>
+        <div style="position: absolute; inset: 0; display: flex; align-items: flex-end; gap: 8px">
+          <sc-for list="{{bars}}" as="b" hint-placeholder-count="7">
+            <div style="flex: 1; display: flex; align-items: flex-end; justify-content: center">
+              <div style="position: relative; width: 26px; height: {{b.h}}; border-radius: 9px 9px 6px 6px; background: {{b.base}}; overflow: hidden">
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: {{b.ex}}; background: #C42B36"></div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 8px">
+        <sc-for list="{{bars}}" as="b" hint-placeholder-count="7">
+          <span style="flex: 1; text-align: center; font-size: 12px; font-weight: {{b.dowWeight}}; color: {{b.dowColor}}">{{b.dow}}</span>
+        </sc-for>
+      </div>
+    </section>
+
+    <section aria-label="Average macros" style="margin: 12px 20px 0; padding: 18px; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 28px; box-shadow: 0 1px 2px rgba(16,24,40,0.04)">
+      <div style="display: flex; align-items: baseline; justify-content: space-between">
+        <h2 style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -0.01em">Macros</h2>
+        <span style="font-size: 13px; font-weight: 500; color: #5F6B7A">Average of 1 week</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 16px">
+        <sc-for list="{{macroRows}}" as="m" hint-placeholder-count="3">
+          <div>
+            <div style="display: flex; align-items: center; justify-content: space-between">
+              <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{m.dot}}"></span>{{m.name}}</span>
+              <span style="font-size: 14px; font-weight: 600; color: {{m.textColor}}">{{m.text}}</span>
+            </div>
+            <div style="margin-top: 8px; height: 8px; border-radius: 999px; background: #EDF0F4">
+              <div style="width: {{m.fillW}}; height: 100%; border-radius: 999px; background: {{m.fill}}"></div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+  </main>
+
+  <footer style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; flex-direction: column; padding: 44px 0 22px; background: linear-gradient(180deg, #FFFFFF00 0%, #FFFFFF 42%); pointer-events: none">
+    <form onSubmit="{{onAsk}}" style="display: flex; align-items: center; gap: 12px; padding: 0 16px; pointer-events: auto">
+      <button type="button" class="press" aria-label="Add a photo" style="flex: none; width: 52px; height: 52px; border-radius: 50%; border: 1px solid #ECECEF; background: #FFFFFF; box-shadow: 0 6px 24px rgba(59,130,246,0.18); display: flex; align-items: center; justify-content: center">
+        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #6B7280; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.2l1.1-1.6A1 1 0 0 1 9.6 4h4.8a1 1 0 0 1 .8.4L16.3 6h1.2A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z"></path><circle cx="12" cy="12.5" r="3.2"></circle></svg>
+      </button>
+      <div class="chat-pill" style="flex: 1; min-width: 0; height: 52px; display: flex; align-items: center; gap: 6px; padding: 0 6px 0 20px; border-radius: 26px; border: 1px solid #ECECEF; background: #FFFFFF; box-shadow: 0 6px 24px rgba(59,130,246,0.18)">
+        <input class="chat-input" type="text" aria-label="Ask a question about your progress" placeholder="Ask about your progress..." value="{{draft}}" onInput="{{onDraft}}" style="flex: 1; min-width: 0; height: 100%; border: 0; background: transparent; padding: 0; font-size: 16px; color: #14181F">
+        <button type="submit" class="press" aria-label="Send" style="flex: none; width: 40px; height: 40px; border-radius: 50%; border: 0; background: transparent; display: flex; align-items: center; justify-content: center">
+          <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #3B82F6; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg>
+        </button>
+      </div>
+    </form>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"goal":{"editor":"int","default":2000,"min":1200,"max":4000,"step":50,"section":"Plan"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const GOAL = this.props.goal ?? 2000;
+    const TARGET = { p: 120, c: 230, f: 65 };
+    const TODAY = 5;
+    const range = (this.state && this.state.range != null) ? this.state.range : 1;
+    const fmt = (n) => n.toLocaleString('en-IN');
+
+    // ---- weight ----
+    const START = 76.0, GOAL_W = 68;
+    const RANGES = [
+      { key: '1W', period: 'this week', from: 'Oct 25', to: 'Oct 31', data: [73.0, 72.9, 72.8, 72.8, 72.7, 72.5, 72.4] },
+      { key: '1M', period: 'in 30 days', from: 'Oct 1', to: 'Oct 31', data: [74.2, 74.1, 73.9, 73.8, 73.6, 73.5, 73.2, 73.0, 72.7, 72.4] },
+      { key: '3M', period: 'in 3 months', from: 'Aug 1', to: 'Oct 31', data: [76.0, 75.6, 75.4, 75.0, 74.6, 74.4, 74.2, 73.6, 73.0, 72.4] }
+    ];
+    const R = RANGES[range];
+    const W = 314, H = 132, PXL = 8, PT = 18, PB = 18;
+    const mn = Math.min(...R.data), mx = Math.max(...R.data);
+    const span = (mx - mn) || 1;
+    const pts = R.data.map((v, i) => [
+      PXL + i * (W - 2 * PXL) / (R.data.length - 1),
+      PT + (mx - v) / span * (H - PT - PB)
+    ]);
+    const first = pts[0], last = pts[pts.length - 1];
+    const cur = R.data[R.data.length - 1];
+    const delta = cur - R.data[0];
+    const wt = {
+      value: cur.toFixed(1),
+      chg: (delta < 0 ? '−' : '+') + Math.abs(delta).toFixed(1) + ' kg',
+      period: R.period,
+      line: pts.map((p) => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' '),
+      area: 'M' + pts.map((p) => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L') + ' L' + last[0].toFixed(1) + ' ' + H + ' L' + first[0].toFixed(1) + ' ' + H + ' Z',
+      cx: last[0].toFixed(1),
+      cy: last[1].toFixed(1),
+      from: R.from,
+      to: R.to,
+      aria: 'Weight trend, ' + R.from + ' to ' + R.to + ', from ' + R.data[0].toFixed(1) + ' to ' + cur.toFixed(1) + ' kilograms'
+    };
+    const tabs = RANGES.map((r, i) => ({
+      label: r.key,
+      pressed: i === range,
+      bg: i === range ? '#FFFFFF' : 'transparent',
+      color: i === range ? '#14181F' : '#5F6B7A',
+      shadow: i === range ? '0 1px 3px rgba(16,24,40,0.10)' : 'none',
+      pick: () => this.setState({ range: i })
+    }));
+    const lost = START - 72.4;
+    const goal = {
+      pct: (lost / (START - GOAL_W) * 100).toFixed(1) + '%',
+      text: lost.toFixed(1) + ' kg lost · ' + (72.4 - GOAL_W).toFixed(1) + ' kg to go'
+    };
+
+    // ---- meals data (same sample data as Home) ----
+    const POOL = {
+      oats:    { k: 320, p: 11, c: 54, f: 7 },
+      poha:    { k: 290, p: 7, c: 46, f: 9 },
+      idli:    { k: 260, p: 9, c: 48, f: 3 },
+      dal:     { k: 520, p: 20, c: 78, f: 14 },
+      biryani: { k: 640, p: 32, c: 82, f: 20 },
+      wrap:    { k: 480, p: 22, c: 52, f: 19 },
+      yogurt:  { k: 180, p: 14, c: 10, f: 9 },
+      chai:    { k: 140, p: 3, c: 22, f: 4 },
+      shake:   { k: 160, p: 24, c: 6, f: 3 },
+      khichdi: { k: 430, p: 16, c: 70, f: 9 },
+      bhurji:  { k: 460, p: 24, c: 46, f: 19 }
+    };
+    const DAYS = [
+      { full: 'Mon', meals: ['oats', 'biryani', 'yogurt', 'chai', 'bhurji', 'shake'] },
+      { full: 'Tue', meals: ['idli', 'biryani', 'yogurt', 'chai', 'wrap', 'bhurji', 'shake'] },
+      { full: 'Wed', meals: ['poha', 'dal', 'yogurt', 'chai', 'wrap', 'shake'] },
+      { full: 'Thu', meals: ['oats', 'biryani', 'yogurt', 'chai', 'khichdi', 'shake'] },
+      { full: 'Fri', meals: ['idli', 'biryani', 'chai', 'yogurt', 'wrap', 'bhurji'] },
+      { full: 'Sat', meals: ['poha', 'dal', 'chai', 'yogurt'] },
+      { full: 'Sun', meals: [] }
+    ].map((d) => {
+      const list = d.meals.map((id) => POOL[id]);
+      const sum = (key) => list.reduce((s, m) => s + m[key], 0);
+      return { full: d.full, logged: list.length > 0, total: sum('k'), p: sum('p'), c: sum('c'), f: sum('f') };
+    });
+
+    // ---- calories chart ----
+    const CH = 128, MAXC = 2500;
+    const goalPx = GOAL / MAXC * CH;
+    const DOW = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    const bars = DAYS.map((d, i) => {
+      const over = d.total > GOAL;
+      const h = d.total > 0 ? Math.max(6, d.total / MAXC * CH) : 6;
+      return {
+        dow: DOW[i],
+        h: h.toFixed(1) + 'px',
+        base: d.total === 0 ? '#E9ECF1' : (over ? '#F2878C' : '#22A672'),
+        ex: over ? (h - goalPx).toFixed(1) + 'px' : '0px',
+        dowColor: i === TODAY ? '#14181F' : '#5F6B7A',
+        dowWeight: i === TODAY ? '700' : '500'
+      };
+    });
+    const full = DAYS.slice(0, 5);
+    const avgCal = Math.round(full.reduce((s, d) => s + d.total, 0) / full.length);
+    const onTarget = full.filter((d) => d.total <= GOAL).length;
+    const cal = {
+      avg: fmt(avgCal),
+      onTarget: onTarget + ' of ' + full.length + ' days on target',
+      goalBottom: goalPx.toFixed(1) + 'px',
+      goalLabelBottom: (goalPx + 3).toFixed(1) + 'px',
+      goalLabel: 'Goal ' + fmt(GOAL),
+      chartAria: 'Calories per day this week: ' + DAYS.filter((d) => d.total > 0).map((d) => d.full + ' ' + fmt(d.total)).join(', ') + '. Daily goal ' + fmt(GOAL) + '.'
+    };
+
+    // ---- macro averages ----
+    const avg = (k) => Math.round(full.reduce((s, d) => s + d[k], 0) / full.length);
+    const macroRows = [
+      { name: 'Protein', k: 'p', t: TARGET.p, base: '#3B6FE8', deep: '#2548B8' },
+      { name: 'Carbs', k: 'c', t: TARGET.c, base: '#D97706', deep: '#A15C07' },
+      { name: 'Fat', k: 'f', t: TARGET.f, base: '#8B5CF6', deep: '#6D3BD2' }
+    ].map((m) => {
+      const v = avg(m.k);
+      const pct = v / m.t;
+      const over = pct > 1;
+      return {
+        name: m.name,
+        dot: m.base,
+        text: v + ' / ' + m.t + ' g',
+        textColor: over ? '#C42B36' : '#14181F',
+        fillW: (Math.min(pct, 1) * 100).toFixed(1) + '%',
+        fill: over ? m.deep : m.base
+      };
+    });
+
+    // ---- insights ----
+    const pAvg = avg('p');
+    const gap = TARGET.p - pAvg;
+    const open = !!(this.state && this.state.insOpen);
+    const draft = (this.state && this.state.draft) || '';
+    const asked = (this.state && this.state.asked) || '';
+    const proteinText = gap > 0
+      ? 'Protein is averaging ' + pAvg + ' g, about ' + gap + ' g under your ' + TARGET.p + ' g goal. Greek yogurt at breakfast would close most of the gap.'
+      : 'Protein is averaging ' + pAvg + ' g, right on your ' + TARGET.p + ' g goal. Keep it up.';
+    const all = [
+      { bg: '#FBEAEC', fg: '#C42B36', icon: 'M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z', text: 'Your two over-goal days, Tuesday and Friday, both included a snack after 10 PM.' },
+      { bg: '#E9EFFD', fg: '#2548B8', icon: 'M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17zM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', text: proteinText },
+      { bg: '#E8F6EF', fg: '#14784C', icon: 'M3 17l6-6 4 4 8-8M15 7h6v6', text: 'You are losing about 0.4 kg a week, a steady pace that would reach 68 kg in roughly 11 weeks.' }
+    ];
+    const insightItems = open ? all : all.slice(0, 1);
+    const ins = { expanded: open, toggleLabel: open ? 'Collapse insights' : 'Expand insights', rot: open ? 'rotate(180deg)' : 'none' };
+    const askedShown = asked !== '';
+
+    // ---- photo thumbnails (latest check-in, placeholder illustrations) ----
+    const n1 = (v) => v.toFixed(1);
+    const mk = (k, bg, fg, side) => {
+      const f = 1;
+      const g = { label: k, bg: bg, fg: fg };
+      if (!side) {
+        g.tw = n1(46); g.tx = n1(37); g.l1w = n1(15); g.l1x = n1(44); g.l2w = n1(15); g.l2x = n1(61);
+        g.aw = n1(9); g.a1x = n1(26); g.a2x = n1(85); g.hx = '60';
+      } else {
+        g.tw = n1(30); g.tx = n1(45); g.l1w = n1(20); g.l1x = n1(50); g.l2w = '0'; g.l2x = '60';
+        g.aw = '0'; g.a1x = '60'; g.a2x = '60'; g.hx = '62';
+      }
+      g.aria = k + ' photo, Oct 31 (placeholder illustration)';
+      g.openLabel = 'See ' + k + ' photo and the rest in Progress photos';
+      return g;
+    };
+    const thumbs = [
+      mk('Front', '#E9EFFD', '#34426B', false),
+      mk('Left', '#E8F6EF', '#2B5A48', true),
+      mk('Back', '#F3EEFE', '#4D3887', false)
+    ];
+
+    return {
+      thumbs: thumbs,
+      tabs: tabs,
+      wt: wt,
+      goal: goal,
+      cal: cal,
+      bars: bars,
+      macroRows: macroRows,
+      ins: ins,
+      insightItems: insightItems,
+      draft: draft,
+      onDraft: (e) => this.setState({ draft: e.target.value }),
+      onAsk: (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        const t = draft.trim();
+        if (t) this.setState({ asked: t, draft: '', insOpen: true });
+      },
+      toggleInsights: () => this.setState({ insOpen: !open }),
+      askedShow: askedShown ? 'flex' : 'none',
+      asked: asked
+    };
+  }
+}
+</script>
+</body>
+</html>
