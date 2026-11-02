@@ -109,6 +109,17 @@ service cloud.firestore {
       allow delete: if isOwner(userId);
     }
 
+    match /users/{userId}/photos/{photoId} {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId)
+        && request.resource.data.userId == userId
+        && request.resource.data.angle in ['FRONT', 'LEFT', 'RIGHT', 'BACK']
+        && request.resource.data.dateString is string && request.resource.data.dateString.size() <= 20
+        && request.resource.data.storagePath is string && request.resource.data.storagePath.size() <= 200
+        && request.resource.data.weightKg is number && request.resource.data.weightKg >= 0 && request.resource.data.weightKg <= 400;
+      allow delete: if isOwner(userId);
+    }
+
     // Explicit fallback deny
     match /{document=**} {
       allow read, write: if false;

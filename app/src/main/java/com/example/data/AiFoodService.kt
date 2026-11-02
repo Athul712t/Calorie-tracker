@@ -386,6 +386,39 @@ class AiFoodService {
         }
     }
 
+    /**
+     * Answers a question about the user's own progress. [dataSummary] holds the numbers the answer must
+     * come from; the model is told not to use anything else.
+     */
+    suspend fun answerProgressQuestion(question: String, dataSummary: String): String {
+        val prompt = buildString {
+            append("You are the coach inside a calorie tracker. Answer the user's question using ONLY the data below. ")
+            append("If the data does not contain the answer, say what is missing. Do not invent numbers. ")
+            append("Be kind, specific and brief: at most 4 sentences, plain text, no markdown.\n\n")
+            append("DATA\n").append(dataSummary).append("\n\n")
+            append("QUESTION: \"${question.trim()}\"\n\n")
+            append("Return JSON only: {\"answer\": string}")
+        }
+        try {
+            val response = withTimeout(25_000L) { model.generateContent(prompt) }
+            val text = response.text
+            if (text.isNullOrBlank()) throw AiNutritionException("The AI returned an empty answer. Please try again.")
+            val cleaned = text.trim().removePrefix("```json").removePrefix("```").removeSuffix("```").trim()
+            val answer = JSONObject(cleaned).optString("answer", "")
+            if (answer.isBlank()) throw AiNutritionException("The AI returned an empty answer. Please try again.")
+            return answer
+        } catch (e: TimeoutCancellationException) {
+            throw AiNutritionException("That took too long. Please try again.", cause = e)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: AiNutritionException) {
+            throw e
+        } catch (e: Exception) {
+            Log.e(TAG, "answerProgressQuestion failed: ${e.message}", e)
+            throw AiNutritionException("I couldn't answer that: ${e.localizedMessage ?: "unknown error"}", cause = e)
+        }
+    }
+
     suspend fun getIndianSuggestionsForRemainingMacros(
         remainingCalories: Double,
         remainingProtein: Double,

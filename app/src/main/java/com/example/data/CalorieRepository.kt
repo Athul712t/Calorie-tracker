@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.R
 import com.example.model.Meal
 import com.example.model.MenuItem
+import com.example.model.ProgressPhoto
 import com.example.model.UserGoal
 import com.example.model.UserProfile
 import com.example.model.WeightLog
@@ -15,6 +16,9 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.snapshots
+import com.google.firebase.storage.storage
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -383,6 +387,81 @@ class CalorieRepository(private val db: FirebaseFirestore) {
         } catch (e: Exception) {
             handleFirestoreError(e, OperationType.CREATE, docRef.path)
             throw e
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Progress photos (files in Firebase Storage, details in Firestore)
+    // ---------------------------------------------------------------------
+
+    fun observePhotos(userId: String): Flow<List<ProgressPhoto>> = flow {
+        val path = "users/$userId/photos"
+        db.collection("users").document(userId).collection("photos")
+            .orderBy("dateString", Query.Direction.DESCENDING)
+            .limit(400)
+            .snapshots()
+            .map { snapshot ->
+                snapshot.documents.mapNotNull { doc ->
+                    try {
+                        doc.toObject(ProgressPhoto::class.java)?.copy(id = doc.id)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+            }
+            .catch { error ->
+                if (error is Exception) handleFirestoreError(error, OperationType.LIST, path)
+                throw error
+            }
+            .collect { emit(it) }
+    }
+
+    /** Uploads the JPEG and records it. Taking the same angle again on the same day replaces the photo. */
+    suspend fun savePhoto(
+        angle: String,
+        dateString: String,
+        weightKg: Double,
+        jpeg: ByteArray,
+        explicitUserId: String? = null
+    ) {
+        val uid = requireUserId(explicitUserId)
+        val id = "${dateString}_$angle"
+        val storagePath = "users/$uid/photos/$id.jpg"
+        val docRef = db.collection("users").document(uid).collection("photos").document(id)
+        try {
+            val meta = com.google.firebase.storage.StorageMetadata.Builder().setContentType("image/jpeg").build()
+            Firebase.storage.reference.child(storagePath).putBytes(jpeg, meta).await()
+            docRef.set(
+                hashMapOf<String, Any>(
+                    "angle" to angle,
+                    "dateString" to dateString,
+                    "weightKg" to weightKg,
+                    "storagePath" to storagePath,
+                    "userId" to uid,
+                    "createdAt" to FieldValue.serverTimestamp()
+                )
+            ).await()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            handleFirestoreError(e, OperationType.CREATE, docRef.path)
+            throw e
+        }
+    }
+
+    /** Downloads a stored photo, scaled so its longest side is about [maxSide]. Null if it cannot be read. */
+    suspend fun loadPhoto(storagePath: String, maxSide: Int = 800): Bitmap? {
+        return try {
+            val bytes = Firebase.storage.reference.child(storagePath).getBytes(8L * 1024 * 1024).await()
+            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
+            var sample = 1
+            while (maxOf(bounds.outWidth, bounds.outHeight) / (sample * 2) >= maxSide) sample *= 2
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.size, BitmapFactory.Options().apply { inSampleSize = sample })
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            null
         }
     }
 }

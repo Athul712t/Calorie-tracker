@@ -6,6 +6,7 @@ package com.example.ui.nav
  */
 object Routes {
     const val GATE = "gate"
+    const val PHOTO_CAPTURE = "photos/capture/{angle}"
     const val SCREEN_INDEX = "screens"          // developer index, not part of the product
     const val ONBOARDING = "onboarding"         // Onboarding.dc.html
     const val HOME = "home"                     // Main.dc.html, EmptyHome.dc.html (empty state)
@@ -19,6 +20,8 @@ object Routes {
     const val MEAL_DETAIL = "meal/{mealId}"     // MealDetail.dc.html + MealChat.dc.html
     const val ADD_FOOD = "food/add"             // AddFood.dc.html
     const val HISTORY = "history"               // DayHistory.dc.html
+
+    fun photoCapture(angle: String) = "photos/capture/$angle"
 
     fun mealDetail(mealId: String) = "meal/$mealId"
 }

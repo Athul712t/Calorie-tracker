@@ -19,6 +19,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.example.ui.CalorieTrackerViewModel
 import com.example.ui.capture.AnalysingScreen
 import com.example.ui.capture.CaptureScreen
@@ -28,6 +30,8 @@ import com.example.ui.home.HomeScreen
 import com.example.ui.meal.MealDetailScreen
 import com.example.ui.onboarding.OnboardingScreen
 import com.example.ui.profile.EditGoalScreen
+import com.example.ui.progress.PhotosScreen
+import com.example.ui.progress.ProgressScreen
 import com.example.ui.profile.EditProfileScreen
 import com.example.ui.profile.ProfileScreen
 import com.example.ui.theme.AppColors
@@ -181,16 +185,41 @@ fun AppNavHost(
             )
         }
 
-        composable(Routes.SCREEN_INDEX) {
-            ScreenIndex(onOpen = { route -> navController.navigate(route) })
+        composable(Routes.PROGRESS) {
+            ProgressScreen(
+                viewModel = viewModel,
+                onHome = { navController.popBackStack(Routes.HOME, inclusive = false) },
+                onOpenPhotos = { navController.navigate(Routes.PHOTOS) }
+            )
         }
 
-        // Screens that are designed but not built yet.
-        listOf(
-            Routes.PROGRESS, Routes.PHOTOS
-        ).forEach { route ->
-            val info = ALL_SCREENS.first { it.route == route }
-            composable(route) { PlaceholderScreen(info, back) }
+        composable(Routes.PHOTOS) {
+            PhotosScreen(
+                viewModel = viewModel,
+                onBack = back,
+                onCapture = { angle -> navController.navigate(Routes.photoCapture(angle)) }
+            )
+        }
+
+        composable(
+            Routes.PHOTO_CAPTURE,
+            arguments = listOf(navArgument("angle") { type = NavType.StringType })
+        ) { entry ->
+            val angle = entry.arguments?.getString("angle") ?: "FRONT"
+            CaptureScreen(
+                onBack = back,
+                title = "Take your ${angle.lowercase()} photo",
+                permissionReason = "Allow the camera so you can take progress photos.",
+                onPhoto = { bmp: Bitmap ->
+                    viewModel.saveProgressPhoto(angle, bmp) { ok ->
+                        if (ok && navController.currentDestination?.route == Routes.PHOTO_CAPTURE) navController.popBackStack()
+                    }
+                }
+            )
+        }
+
+        composable(Routes.SCREEN_INDEX) {
+            ScreenIndex(onOpen = { route -> navController.navigate(route) })
         }
     }
 }
