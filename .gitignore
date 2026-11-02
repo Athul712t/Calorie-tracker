@@ -17,3 +17,8 @@ local.properties
 .env
 debug.keystore
 *-debug.log
+
+# signing keys
+*.jks
+*.keystore
+!debug.keystore
