@@ -51,7 +51,7 @@ data class CalorieUiState(
     val sessionReady: Boolean = false,
     /** Weigh-ins, newest first. */
     val weights: List<WeightLog> = emptyList(),
-    /** Meals from the last 35 days, used by the week strip and history. */
+    /** Meals from the last 120 days, used by the week strip and history. */
     val recentMeals: List<Meal> = emptyList(),
     /** Set while a saved meal is open for editing. Null when the meal on screen is new. */
     val editingMealId: String? = null,
@@ -117,7 +117,7 @@ class CalorieTrackerViewModel(application: Application) : AndroidViewModel(appli
 
     private fun observeData(userId: String, dateString: String) {
         dataJobs.forEach { it.cancel() }
-        val fromDate = daysAgoString(35)
+        val fromDate = daysAgoString(120)
 
         dataJobs = listOf(
             viewModelScope.launch {
@@ -702,5 +702,22 @@ class CalorieTrackerViewModel(application: Application) : AndroidViewModel(appli
         deleteMeal(id)
         _uiState.value = _uiState.value.copy(pendingMeal = null, editingMealId = null)
         onDone()
+    }
+
+    /** Copies every meal logged on [fromDate] to [toDate] (History: Copy to today / Copy yesterday). */
+    fun copyDay(fromDate: String, toDate: String, onDone: () -> Unit = {}) {
+        val uid = currentUserId ?: Firebase.auth.currentUser?.uid ?: return
+        val source = _uiState.value.recentMeals.filter { it.dateString == fromDate }
+        if (source.isEmpty()) return
+        viewModelScope.launch {
+            try {
+                source.forEach { m ->
+                    repository.addMeal(m.copy(id = "", dateString = toDate, userId = uid), uid)
+                }
+                onDone()
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(errorMessage = "Could not copy meals: ${e.localizedMessage}")
+            }
+        }
     }
 }
