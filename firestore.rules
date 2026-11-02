@@ -1,0 +1,94 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidTimestamp(val) {
+      return val is timestamp && val <= request.time;
+    }
+
+    function isValidMeal(data, userId) {
+      return data.keys().hasAll(['id', 'name', 'mealType', 'calories', 'protein', 'carbs', 'fat', 'userId'])
+        && data.id is string && data.id.size() > 0 && data.id.size() <= 100
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 200
+        && data.mealType is string && data.mealType.size() > 0 && data.mealType.size() <= 50
+        && data.calories is number && data.calories >= 0 && data.calories <= 20000
+        && data.protein is number && data.protein >= 0 && data.protein <= 1000
+        && data.carbs is number && data.carbs >= 0 && data.carbs <= 2000
+        && data.fat is number && data.fat >= 0 && data.fat <= 1000
+        && (!('fiber' in data) || (data.fiber is number && data.fiber >= 0))
+        && (!('servings' in data) || (data.servings is number && data.servings >= 0))
+        && (!('contextNotes' in data) || (data.contextNotes is string && data.contextNotes.size() <= 1000))
+        && (!('imageUrl' in data) || (data.imageUrl is string && data.imageUrl.size() <= 50000))
+        && (!('dateString' in data) || (data.dateString is string && data.dateString.size() <= 20))
+        && (!('hourOfDay' in data) || (data.hourOfDay is int && data.hourOfDay >= 0 && data.hourOfDay <= 23))
+        && data.userId == userId
+        && (!('createdAt' in data) || isValidTimestamp(data.createdAt))
+        && (!('updatedAt' in data) || isValidTimestamp(data.updatedAt));
+    }
+
+    function isValidMenuItem(data, userId) {
+      return data.keys().hasAll(['id', 'name', 'calories', 'protein', 'carbs', 'fat', 'userId'])
+        && data.id is string && data.id.size() > 0 && data.id.size() <= 100
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 200
+        && data.calories is number && data.calories >= 0 && data.calories <= 20000
+        && data.protein is number && data.protein >= 0 && data.protein <= 1000
+        && data.carbs is number && data.carbs >= 0 && data.carbs <= 2000
+        && data.fat is number && data.fat >= 0 && data.fat <= 1000
+        && (!('fiber' in data) || (data.fiber is number && data.fiber >= 0))
+        && (!('defaultPortion' in data) || (data.defaultPortion is string && data.defaultPortion.size() <= 100))
+        && (!('category' in data) || (data.category is string && data.category.size() <= 50))
+        && (!('frequencyCount' in data) || (data.frequencyCount is int && data.frequencyCount >= 0))
+        && (!('lastLoggedAt' in data) || isValidTimestamp(data.lastLoggedAt))
+        && data.userId == userId
+        && (!('createdAt' in data) || isValidTimestamp(data.createdAt))
+        && (!('updatedAt' in data) || isValidTimestamp(data.updatedAt));
+    }
+
+    function isValidGoal(data, userId) {
+      return data.keys().hasAll(['id', 'calorieGoal', 'proteinGoal', 'carbsGoal', 'fatGoal', 'userId'])
+        && data.id is string && data.id.size() > 0 && data.id.size() <= 100
+        && data.calorieGoal is int && data.calorieGoal >= 500 && data.calorieGoal <= 15000
+        && data.proteinGoal is int && data.proteinGoal >= 10 && data.proteinGoal <= 1000
+        && data.carbsGoal is int && data.carbsGoal >= 10 && data.carbsGoal <= 2000
+        && data.fatGoal is int && data.fatGoal >= 5 && data.fatGoal <= 1000
+        && data.userId == userId
+        && (!('createdAt' in data) || isValidTimestamp(data.createdAt))
+        && (!('updatedAt' in data) || isValidTimestamp(data.updatedAt));
+    }
+
+    match /users/{userId}/meals/{mealId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidMeal(request.resource.data, userId);
+      allow update: if isOwner(userId) && isValidMeal(request.resource.data, userId);
+      allow delete: if isOwner(userId);
+    }
+
+    match /users/{userId}/menu_items/{itemId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidMenuItem(request.resource.data, userId);
+      allow update: if isOwner(userId) && isValidMenuItem(request.resource.data, userId);
+      allow delete: if isOwner(userId);
+    }
+
+    match /users/{userId}/goals/{goalId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidGoal(request.resource.data, userId);
+      allow update: if isOwner(userId) && isValidGoal(request.resource.data, userId);
+      allow delete: if isOwner(userId);
+    }
+
+    // Explicit fallback deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

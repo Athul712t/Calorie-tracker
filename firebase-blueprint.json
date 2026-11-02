@@ -1,0 +1,80 @@
+{
+  "entities": {
+    "Meal": {
+      "title": "Meal",
+      "description": "Logged meal with calories, macros, context notes, and optional photo",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Document ID" },
+        "name": { "type": "string", "description": "Name of food item or meal description" },
+        "mealType": { "type": "string", "description": "Breakfast, Lunch, Snacks, or Dinner" },
+        "calories": { "type": "number", "description": "Calorie content in kcal" },
+        "protein": { "type": "number", "description": "Protein content in grams" },
+        "carbs": { "type": "number", "description": "Carbohydrates content in grams" },
+        "fat": { "type": "number", "description": "Fat content in grams" },
+        "fiber": { "type": "number", "description": "Fiber content in grams" },
+        "servings": { "type": "number", "description": "Serving count" },
+        "contextNotes": { "type": "string", "description": "Context given by user" },
+        "imageUrl": { "type": "string", "description": "Optional image URI or base64 data" },
+        "dateString": { "type": "string", "description": "Date formatted YYYY-MM-DD" },
+        "hourOfDay": { "type": "integer", "description": "Hour of day 0-23" },
+        "userId": { "type": "string", "description": "Authenticated user ID" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp of creation" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp of update" }
+      },
+      "required": ["id", "name", "mealType", "calories", "protein", "carbs", "fat", "userId"]
+    },
+    "MenuItem": {
+      "title": "MenuItem",
+      "description": "Saved food item in user menu for quick addition",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Document ID" },
+        "name": { "type": "string", "description": "Name of the food item" },
+        "calories": { "type": "number", "description": "Calorie content in kcal per standard serving" },
+        "protein": { "type": "number", "description": "Protein in grams" },
+        "carbs": { "type": "number", "description": "Carbs in grams" },
+        "fat": { "type": "number", "description": "Fat in grams" },
+        "fiber": { "type": "number", "description": "Fiber in grams" },
+        "defaultPortion": { "type": "string", "description": "Portion description e.g. 1 bowl, 2 pieces" },
+        "category": { "type": "string", "description": "Meal category" },
+        "frequencyCount": { "type": "integer", "description": "Number of times logged" },
+        "lastLoggedAt": { "type": "string", "format": "date-time", "description": "Last logged timestamp" },
+        "userId": { "type": "string", "description": "Authenticated user ID" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp of creation" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp of update" }
+      },
+      "required": ["id", "name", "calories", "protein", "carbs", "fat", "userId"]
+    },
+    "UserGoal": {
+      "title": "UserGoal",
+      "description": "Daily nutrition and calorie targets",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Document ID" },
+        "calorieGoal": { "type": "integer", "description": "Daily target calories in kcal" },
+        "proteinGoal": { "type": "integer", "description": "Daily target protein in grams" },
+        "carbsGoal": { "type": "integer", "description": "Daily target carbs in grams" },
+        "fatGoal": { "type": "integer", "description": "Daily target fat in grams" },
+        "userId": { "type": "string", "description": "Authenticated user ID" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp of creation" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp of update" }
+      },
+      "required": ["id", "calorieGoal", "proteinGoal", "carbsGoal", "fatGoal", "userId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/meals/{mealId}": {
+      "schema": "Meal",
+      "description": "Individual meals logged by a user"
+    },
+    "/users/{userId}/menu_items/{itemId}": {
+      "schema": "MenuItem",
+      "description": "Custom and saved foods menu for quick tap addition"
+    },
+    "/users/{userId}/goals/{goalId}": {
+      "schema": "UserGoal",
+      "description": "Target goals for daily calories and macros"
+    }
+  }
+}

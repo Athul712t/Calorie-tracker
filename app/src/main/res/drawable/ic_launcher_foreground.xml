@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:pivotX="54"
+        android:pivotY="54">
+        <!-- Calorie Flame Outer (Saffron Orange) -->
+        <path
+            android:fillColor="#FF9100"
+            android:pathData="M54,26 C49.5,33.5 45,39 45,46.5 C45,52.5 49,57 54,57 C59,57 63,52.5 63,46.5 C63,41.5 60.5,37 57.5,33 C56.5,35 55,36.5 54,37 C54.5,34 55.5,30 54,26 Z" />
+        <!-- Calorie Flame Inner Core (Warm Gold) -->
+        <path
+            android:fillColor="#FFD600"
+            android:pathData="M54,38 C52,42 50,45 50,48 C50,51 52,53.5 54,53.5 C56,53.5 58,51 58,48 C58,45 56.5,43 54,38 Z" />
+        <!-- Nutrition Bowl Base (Vibrant Mint/Emerald Green) -->
+        <path
+            android:fillColor="#00E676"
+            android:pathData="M33,56 C33,68 42,78 54,78 C66,78 75,68 75,56 L33,56 Z" />
+        <!-- Bowl Rim Line -->
+        <path
+            android:fillColor="#B9F6CA"
+            android:pathData="M31,54 C31,52.5 33,52 35,52 L73,52 C75,52 77,52.5 77,54 C77,55.5 75,56 73,56 L35,56 C33,56 31,55.5 31,54 Z" />
+        <!-- Sprout Leaf (Fresh Healthy Salad/Leaf accent) -->
+        <path
+            android:fillColor="#69F0AE"
+            android:pathData="M54,53 C59,47 69,45 72,48 C72,55 65,58 54,53 Z" />
+        <!-- Sprout Stem -->
+        <path
+            android:fillColor="#00B0FF"
+            android:pathData="M54,78 L54,82 L50,82 C48,82 46,83 46,84 C46,85 48,86 50,86 L58,86 C60,86 62,85 62,84 C62,83 60,82 58,82 L54,82 Z" />
+    </group>
+</vector>

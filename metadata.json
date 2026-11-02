@@ -1,0 +1,6 @@
+{
+  "name": "CalorieTrack",
+  "description": "Smart Indian calorie tracker with photo & chat meal logging, daily macro goals, time-of-day suggestions, and custom menu items.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
