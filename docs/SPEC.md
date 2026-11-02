@@ -16,8 +16,8 @@ Android app that logs meals from a photo, text or search, shows calories and mac
 | `capture` | Capture (auto-detect) | CaptureAuto.dc.html | built (CameraX), not compiled |
 | `analysing` | Analysing | – | built (no design), not compiled |
 | `meal/{mealId}` | Meal detail with chat edit | MealDetail.dc.html, MealChat.dc.html | built, not compiled |
-| `food/add` | Add food (search) | AddFood.dc.html | not built |
-| `history` | Day history | DayHistory.dc.html | not built |
+| `food/add` | Add food (search) | AddFood.dc.html | built |
+| `history` | Day history | DayHistory.dc.html | built |
 
 Not used: `Profile.dc.html` was removed; `Capture.dc.html` (tabbed capture) is superseded by `CaptureAuto.dc.html`; `Attached.dc.html` is Home with a photo attached (a state of Home, not a screen).
 

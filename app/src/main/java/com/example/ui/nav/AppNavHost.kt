@@ -22,6 +22,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ui.CalorieTrackerViewModel
 import com.example.ui.capture.AnalysingScreen
 import com.example.ui.capture.CaptureScreen
+import com.example.ui.food.AddFoodScreen
+import com.example.ui.history.HistoryScreen
 import com.example.ui.home.HomeScreen
 import com.example.ui.meal.MealDetailScreen
 import com.example.ui.onboarding.OnboardingScreen
@@ -150,13 +152,42 @@ fun AppNavHost(
             )
         }
 
+        composable(Routes.ADD_FOOD) {
+            AddFoodScreen(
+                viewModel = viewModel,
+                onBack = back,
+                onOpenCapture = { navController.navigate(Routes.CAPTURE) },
+                onDescribe = { text ->
+                    viewModel.analyzeMealInput(text, null, "")
+                    navController.navigate(Routes.ANALYSING) { popUpTo(Routes.ADD_FOOD) { inclusive = true } }
+                },
+                onDone = {
+                    navController.navigate(Routes.mealDetail("new")) { popUpTo(Routes.ADD_FOOD) { inclusive = true } }
+                }
+            )
+        }
+
+        composable(Routes.HISTORY) {
+            HistoryScreen(
+                viewModel = viewModel,
+                onBack = back,
+                onAddMeal = { date ->
+                    viewModel.selectDate(date)
+                    navController.navigate(Routes.ADD_FOOD)
+                },
+                onOpenMeal = { id ->
+                    if (viewModel.openSavedMeal(id)) navController.navigate(Routes.mealDetail(id))
+                }
+            )
+        }
+
         composable(Routes.SCREEN_INDEX) {
             ScreenIndex(onOpen = { route -> navController.navigate(route) })
         }
 
         // Screens that are designed but not built yet.
         listOf(
-            Routes.PROGRESS, Routes.PHOTOS, Routes.ADD_FOOD, Routes.HISTORY
+            Routes.PROGRESS, Routes.PHOTOS
         ).forEach { route ->
             val info = ALL_SCREENS.first { it.route == route }
             composable(route) { PlaceholderScreen(info, back) }
