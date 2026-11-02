@@ -91,4 +91,4 @@ Camera and photo-library access are requested at the moment of first use with a 
 3. Plan and profile: Profile, Edit profile, Edit goal, weight log.
 4. Browse and search: Add food, History, empty state.
 5. Progress and Photos.
-6. Release hardening: package id, backup rules, dependency cleanup.
+6. Release hardening: backup rules, dependency cleanup, CI (done); package id and store checklist in `docs/RELEASE.md`.
