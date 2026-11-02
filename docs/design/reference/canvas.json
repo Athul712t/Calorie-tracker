@@ -1,0 +1,170 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Main.dc.html": {
+      "h": 846,
+      "is_interactive": true,
+      "print": "flow",
+      "title": "Home",
+      "w": 394,
+      "x": -466,
+      "y": 100
+    },
+    "Attached.dc.html": {
+      "h": 846,
+      "is_interactive": true,
+      "print": "flow",
+      "title": "Home \u2013 image attached",
+      "w": 394,
+      "x": 8,
+      "y": 100
+    },
+    "Progress.dc.html": {
+      "h": 846,
+      "is_interactive": true,
+      "print": "flow",
+      "title": "Progress",
+      "w": 394,
+      "x": 482,
+      "y": 100
+    },
+    "Photos.dc.html": {
+      "h": 846,
+      "is_interactive": true,
+      "print": "flow",
+      "title": "Progress photos",
+      "w": 394,
+      "x": 1904,
+      "y": 100
+    },
+    "ProfileSimple.dc.html": {
+      "h": 846,
+      "is_interactive": true,
+      "print": "flow",
+      "title": "Profile",
+      "w": 394,
+      "x": 1430,
+      "y": 100
+    },
+    "Capture.dc.html": {
+      "h": 846,
+      "is_interactive": true,
+      "print": "flow",
+      "title": "Capture \u2013 with tabs",
+      "w": 394,
+      "x": 2378,
+      "y": 100
+    },
+    "CaptureAuto.dc.html": {
+      "h": 846,
+      "is_interactive": true,
+      "print": "flow",
+      "title": "Capture \u2013 auto-detect",
+      "w": 394,
+      "x": 2852,
+      "y": 100
+    },
+    "MealDetail.dc.html": {
+      "h": 846,
+      "is_interactive": true,
+      "print": "flow",
+      "title": "Meal detail",
+      "w": 394,
+      "x": 3326,
+      "y": 100
+    },
+    "MealChat.dc.html": {
+      "h": 846,
+      "is_interactive": true,
+      "print": "flow",
+      "title": "Meal detail \u2013 chat edit",
+      "w": 394,
+      "x": 3800,
+      "y": 100
+    },
+    "Onboarding.dc.html": {
+      "h": 846,
+      "is_interactive": true,
+      "print": "flow",
+      "title": "Onboarding",
+      "w": 394,
+      "x": 4274,
+      "y": 100
+    },
+    "GoalEdit.dc.html": {
+      "h": 846,
+      "is_interactive": true,
+      "print": "flow",
+      "title": "Edit goal",
+      "w": 394,
+      "x": 4748,
+      "y": 100
+    },
+    "ProfileEdit.dc.html": {
+      "h": 846,
+      "is_interactive": true,
+      "print": "flow",
+      "title": "Edit profile",
+      "w": 394,
+      "x": 5222,
+      "y": 100
+    },
+    "DayHistory.dc.html": {
+      "h": 846,
+      "is_interactive": true,
+      "print": "flow",
+      "title": "History",
+      "w": 394,
+      "x": 5696,
+      "y": 100
+    },
+    "AddFood.dc.html": {
+      "h": 846,
+      "is_interactive": true,
+      "print": "flow",
+      "title": "Add food \u2013 search",
+      "w": 394,
+      "x": 6170,
+      "y": 100
+    },
+    "EmptyHome.dc.html": {
+      "h": 846,
+      "is_interactive": true,
+      "print": "flow",
+      "title": "Home \u2013 first day",
+      "w": 394,
+      "x": 6644,
+      "y": 100
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-31T13:45:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "file": "Main.dc.html",
+    "view": "focused"
+  },
+  "notes": {},
+  "order": [
+    "Main.dc.html",
+    "Attached.dc.html",
+    "Progress.dc.html",
+    "ProfileSimple.dc.html",
+    "Photos.dc.html",
+    "Capture.dc.html",
+    "CaptureAuto.dc.html",
+    "MealDetail.dc.html",
+    "MealChat.dc.html",
+    "Onboarding.dc.html",
+    "GoalEdit.dc.html",
+    "ProfileEdit.dc.html",
+    "DayHistory.dc.html",
+    "AddFood.dc.html",
+    "EmptyHome.dc.html"
+  ],
+  "pages": [],
+  "title": "Calorie Tracker Home"
+}

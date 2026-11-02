@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Home – image attached</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+button,input{font-family:inherit}
+button{cursor:pointer}
+.noscroll{scrollbar-width:none}
+.noscroll::-webkit-scrollbar{display:none}
+.chat-input::placeholder{color:#737E8F}
+.chat-input:focus{outline:none}
+.press:hover{filter:brightness(0.97)}
+.press:focus-visible{outline:2px solid #14181F;outline-offset:2px}
+.chat-pill:focus-within{outline:2px solid #3B82F6;outline-offset:2px}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; display: flex; flex-direction: column; background: #F7F8FA; font-family: 'DM Sans', system-ui, sans-serif; color: #14181F; overflow: hidden">
+
+  <header style="flex: none; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 20px 20px 8px">
+    <svg width="44" height="44" viewBox="0 0 44 44" role="img" aria-label="App logo" style="justify-self: start; display: block">
+      <rect width="44" height="44" rx="14" style="fill: #14181f"></rect>
+      <circle cx="22" cy="22" r="10" transform="rotate(-90 22 22)" style="fill: none; stroke: #FFFFFF; stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 47.1 62.83"></circle>
+      <circle cx="22" cy="22" r="3.2" style="fill: #22A672"></circle>
+    </svg>
+    <nav aria-label="View" style="justify-self: center; display: flex; gap: 4px; padding: 4px; background: #ECEFF3; border-radius: 999px">
+      <button class="press" aria-current="page" style="height: 36px; padding: 0 20px; border: 0; border-radius: 999px; background: #FFFFFF; color: #14181F; font-size: 14px; font-weight: 600; box-shadow: 0 1px 3px rgba(16,24,40,0.10)">Home</button>
+      <button class="press" style="height: 36px; padding: 0 20px; border: 0; border-radius: 999px; background: transparent; color: #5F6B7A; font-size: 14px; font-weight: 600">Progress</button>
+    </nav>
+    <a class="press" href="ProfileSimple.dc.html" aria-label="Profile and settings" style="justify-self: end; width: 44px; height: 44px; border-radius: 50%; border: 1px solid #E6E9EE; background: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #14181F; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c0.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"></path></svg>
+    </a>
+  </header>
+
+  <main class="noscroll" style="flex: 1; min-height: 0; overflow-y: auto; padding-bottom: 190px">
+
+    <div class="noscroll" ref="{{weekRef}}" style="display: flex; gap: 6px; overflow-x: auto; padding: 8px 20px 4px">
+      <sc-for list="{{week}}" as="d" hint-placeholder-count="10">
+        <button class="press" onClick="{{d.select}}" aria-label="{{d.aria}}" style="flex: none; width: 50px; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 0; border-radius: 18px; background: {{d.bg}}; border: 1px solid {{d.border}}; box-shadow: {{d.shadow}}">
+          <span style="font-size: 12px; font-weight: 500; color: {{d.dowColor}}">{{d.dow}}</span>
+          <span style="position: relative; width: 40px; height: 40px; display: block">
+            <svg viewBox="0 0 100 100" width="40" height="40" aria-hidden="true" style="position: absolute; inset: 0; transform: rotate(-90deg)">
+              <circle cx="50" cy="50" r="42" style="fill: none; stroke: #E9ECF1; stroke-width: 10"></circle>
+              <circle cx="50" cy="50" r="42" style="fill: none; stroke-width: 10; stroke-linecap: round; stroke: {{d.c1}}; stroke-dasharray: {{d.d1}}"></circle>
+              <circle cx="50" cy="50" r="42" style="fill: none; stroke-width: 10; stroke-linecap: round; stroke: {{d.c2}}; stroke-dasharray: {{d.d2}}"></circle>
+            </svg>
+            <span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: {{d.dateColor}}">{{d.date}}</span>
+          </span>
+        </button>
+      </sc-for>
+    </div>
+
+    <section aria-label="Daily calories" style="margin: 12px 20px 0; padding: 16px 18px; display: flex; align-items: center; gap: 18px; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 28px; box-shadow: 0 1px 2px rgba(16,24,40,0.04)">
+      <div style="position: relative; width: 120px; height: 120px; flex: none">
+        <svg viewBox="0 0 100 100" width="120" height="120" role="img" aria-label="{{cal.aria}}" style="transform: rotate(-90deg)">
+          <circle cx="50" cy="50" r="42" style="fill: none; stroke: #E9ECF1; stroke-width: 9"></circle>
+          <circle cx="50" cy="50" r="42" style="fill: none; stroke-width: 9; stroke-linecap: round; stroke: {{cal.c1}}; stroke-dasharray: {{cal.d1}}"></circle>
+          <circle cx="50" cy="50" r="42" style="fill: none; stroke-width: 9; stroke-linecap: round; stroke: {{cal.c2}}; stroke-dasharray: {{cal.d2}}"></circle>
+        </svg>
+        <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center">
+          <span style="font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1">{{cal.eaten}}</span>
+          <span style="font-size: 13px; font-weight: 500; color: #5F6B7A">eaten</span>
+        </div>
+      </div>
+      <div style="min-width: 0; display: flex; flex-direction: column">
+        <span style="font-size: 44px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; color: {{cal.numColor}}">{{cal.num}}</span>
+        <span style="font-size: 15px; font-weight: 500; color: {{cal.labelColor}}">{{cal.label}}</span>
+        <span style="margin-top: 12px; font-size: 13px; color: #5F6B7A">{{cal.goalLine}}</span>
+      </div>
+    </section>
+
+    <section aria-label="Macros" style="margin: 12px 20px 0; padding: 12px 8px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 28px; box-shadow: 0 1px 2px rgba(16,24,40,0.04)">
+      <sc-for list="{{macros}}" as="m" hint-placeholder-count="3">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+          <div style="position: relative; width: 56px; height: 56px">
+            <svg viewBox="0 0 100 100" width="56" height="56" role="img" aria-label="{{m.aria}}" style="transform: rotate(-90deg)">
+              <circle cx="50" cy="50" r="42" style="fill: none; stroke: #E9ECF1; stroke-width: 10"></circle>
+              <circle cx="50" cy="50" r="42" style="fill: none; stroke-width: 10; stroke-linecap: round; stroke: {{m.c1}}; stroke-dasharray: {{m.d1}}"></circle>
+              <circle cx="50" cy="50" r="42" style="fill: none; stroke-width: 10; stroke-linecap: round; stroke: {{m.c2}}; stroke-dasharray: {{m.d2}}"></circle>
+            </svg>
+            <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700">{{m.eaten}}<span style="font-size: 11px; font-weight: 500; color: #5F6B7A">g</span></div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 1px">
+            <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #5F6B7A"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{m.dot}}"></span>{{m.name}}</span>
+            <span style="font-size: 14px; font-weight: 600; color: {{m.statusColor}}">{{m.status}}</span>
+          </div>
+        </div>
+      </sc-for>
+    </section>
+
+    <section aria-label="Weight" style="margin: 12px 20px 0; padding: 12px 14px 12px 18px; display: flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 24px; box-shadow: 0 1px 2px rgba(16,24,40,0.04)">
+      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+        <h2 style="margin: 0; font-size: 12px; font-weight: 600; color: #5F6B7A">Weight</h2>
+        <div style="display: flex; align-items: baseline; gap: 3px">
+          <span style="font-size: 24px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2">{{wt.value}}</span>
+          <span style="font-size: 13px; font-weight: 500; color: #5F6B7A">kg</span>
+        </div>
+      </div>
+      <svg viewBox="0 0 124 52" width="78" height="33" role="img" aria-label="{{wt.aria}}" style="flex: none">
+        <polyline points="{{wt.points}}" style="fill: none; stroke: #22A672; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round"></polyline>
+        <circle cx="{{wt.cx}}" cy="{{wt.cy}}" r="6" style="fill: #22A672; stroke: #FFFFFF; stroke-width: 2.5"></circle>
+      </svg>
+      <div style="flex: none; min-width: 56px; display: flex; flex-direction: column; align-items: flex-end">
+        <span style="font-size: 14px; font-weight: 700; color: #14784C">{{wt.chg}}</span>
+        <span style="font-size: 11px; color: #5F6B7A">this week</span>
+      </div>
+      <button class="press" aria-label="Log weight" style="flex: none; width: 38px; height: 38px; border: 0; border-radius: 50%; background: #F1F3F6; display: flex; align-items: center; justify-content: center">
+        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #14181F; stroke-width: 2.2; stroke-linecap: round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+      </button>
+    </section>
+
+    <section aria-label="Meal log" style="margin: 16px 20px 0">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; padding: 0 4px 12px">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.01em">{{log.title}}</h2>
+        <span style="font-size: 13px; font-weight: 500; color: #5F6B7A">{{log.count}}</span>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 24px; overflow: hidden; box-shadow: 0 1px 2px rgba(16,24,40,0.04)">
+        <sc-for list="{{meals}}" as="m" hint-placeholder-count="4">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-top: {{m.bt}}">
+            <div style="flex: none; width: 52px; height: 52px; border-radius: 14px; background: #EEF1F5; display: flex; align-items: center; justify-content: center">
+              <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #5F6B7A; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round"><path d="M3.5 11h17a8.5 8.5 0 0 1-17 0z"></path><path d="M9 7.5c0-1 1-1.3 1-2.5M14 7.5c0-1 1-1.3 1-2.5"></path></svg>
+            </div>
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+              <span style="font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{m.name}}</span>
+              <span style="font-size: 13px; color: #5F6B7A">{{m.sub}}</span>
+              <span style="font-size: 12px; color: #5F6B7A">{{m.macros}}</span>
+            </div>
+            <div style="flex: none; display: flex; flex-direction: column; align-items: flex-end">
+              <span style="font-size: 16px; font-weight: 700">{{m.k}}</span>
+              <span style="font-size: 12px; color: #5F6B7A">kcal</span>
+            </div>
+          </div>
+        </sc-for>
+        <sc-if value="{{noMeals}}" hint-placeholder-val="{{false}}">
+          <div style="padding: 28px 24px; text-align: center; font-size: 14px; line-height: 1.5; color: #5F6B7A">No meals logged for this day yet. Snap a photo or describe what you ate below.</div>
+        </sc-if>
+      </div>
+    </section>
+
+  </main>
+
+  <footer style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; flex-direction: column; padding: 44px 0 22px; background: linear-gradient(180deg, #FFFFFF00 0%, #FFFFFF 42%); pointer-events: none">
+    <div role="group" aria-label="Attached photo" style="display: flex; padding: 6px 20px 16px; pointer-events: auto">
+      <div style="position: relative; flex: none; width: 76px; height: 76px">
+        <div style="width: 76px; height: 76px; border-radius: 20px; overflow: hidden; border: 2px solid #FFFFFF; box-shadow: 0 4px 14px rgba(59,130,246,0.22)">
+          <svg viewBox="0 0 72 72" width="72" height="72" role="img" aria-label="Attached photo (placeholder): a plate with two rotis, paneer bhurji and a bowl of curd" style="display: block">
+            <rect width="72" height="72" style="fill: #CDB48F"></rect>
+            <circle cx="36" cy="36" r="31" style="fill: #FFFFFF"></circle>
+            <circle cx="36" cy="36" r="26" style="fill: #F3EFE8"></circle>
+            <circle cx="27" cy="28" r="12" style="fill: #E4B263"></circle>
+            <circle cx="27" cy="28" r="12" style="fill: none; stroke: #C48B3C; stroke-width: 1.4; stroke-dasharray: 2 5"></circle>
+            <circle cx="42" cy="31" r="12" style="fill: #EDC27A"></circle>
+            <circle cx="42" cy="31" r="12" style="fill: none; stroke: #C48B3C; stroke-width: 1.4; stroke-dasharray: 2 5"></circle>
+            <ellipse cx="31" cy="49" rx="13" ry="8" style="fill: #E9A83A"></ellipse>
+            <circle cx="26" cy="48" r="1.8" style="fill: #D8552B"></circle>
+            <circle cx="33" cy="52" r="1.8" style="fill: #5E9A4B"></circle>
+            <circle cx="38" cy="47" r="1.8" style="fill: #D8552B"></circle>
+            <circle cx="52" cy="50" r="8" style="fill: #FFFFFF; stroke: #DADDE3; stroke-width: 1.5"></circle>
+            <circle cx="52" cy="50" r="5.5" style="fill: #FBFAF4"></circle>
+          </svg>
+        </div>
+        <button class="press" aria-label="Remove attached photo" style="position: absolute; top: -8px; right: -8px; width: 26px; height: 26px; border-radius: 50%; border: 2px solid #FFFFFF; background: #14181F; display: flex; align-items: center; justify-content: center; padding: 0">
+          <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #FFFFFF; stroke-width: 3; stroke-linecap: round"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg>
+        </button>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px; padding: 0 16px; pointer-events: auto">
+    <button class="press" aria-label="Add a photo" style="flex: none; width: 52px; height: 52px; border-radius: 50%; border: 1px solid #ECECEF; background: #FFFFFF; box-shadow: 0 6px 24px rgba(59,130,246,0.18); display: flex; align-items: center; justify-content: center">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #6B7280; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.2l1.1-1.6A1 1 0 0 1 9.6 4h4.8a1 1 0 0 1 .8.4L16.3 6h1.2A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z"></path><circle cx="12" cy="12.5" r="3.2"></circle></svg>
+    </button>
+    <div class="chat-pill" style="flex: 1; min-width: 0; height: 52px; display: flex; align-items: center; gap: 6px; padding: 0 6px 0 20px; border-radius: 26px; border: 1px solid #BFD4FA; background: #FFFFFF; box-shadow: 0 6px 24px rgba(59,130,246,0.18)">
+      <input class="chat-input" type="text" aria-label="Enter your food or add context" placeholder="Enter your food..." value="{{draft}}" onInput="{{onDraft}}" style="flex: 1; min-width: 0; height: 100%; border: 0; background: transparent; padding: 0; font-size: 16px; color: #14181F">
+    <button class="press" aria-label="Send" style="flex: none; width: 40px; height: 40px; border-radius: 50%; border: 0; background: #3B82F6; display: flex; align-items: center; justify-content: center">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #FFFFFF; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg>
+    </button>
+    </div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"goal":{"editor":"int","default":2000,"min":1200,"max":4000,"step":50,"section":"Plan"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const GOAL = this.props.goal ?? 2000;
+    const TARGET = { p: 120, c: 230, f: 65 };
+    const CIRC = 2 * Math.PI * 42;
+    const GREEN = '#22A672', RED1 = '#F2878C', RED2 = '#C42B36';
+    const TODAY = 5;
+    const sel = (this.state && this.state.sel != null) ? this.state.sel : TODAY;
+
+    const ring = (val, target, pal) => {
+      const pct = target > 0 ? val / target : 0;
+      const f1 = Math.min(pct, 1);
+      const f2 = pct > 1 ? Math.min(pct - 1, 1) : 0;
+      const over = pct > 1;
+      return {
+        over: over,
+        d1: (f1 * CIRC).toFixed(2) + ' ' + CIRC.toFixed(2),
+        d2: (f2 * CIRC).toFixed(2) + ' ' + CIRC.toFixed(2),
+        c1: f1 > 0 ? (pal ? pal.base : (over ? RED1 : GREEN)) : 'transparent',
+        c2: f2 > 0 ? (pal ? pal.deep : RED2) : 'transparent'
+      };
+    };
+    const fmt = (n) => n.toLocaleString('en-IN');
+
+    const POOL = {
+      oats:    { name: 'Masala oats with banana', k: 320, p: 11, c: 54, f: 7 },
+      poha:    { name: 'Poha with peanuts', k: 290, p: 7, c: 46, f: 9 },
+      idli:    { name: 'Idli (3) with sambar', k: 260, p: 9, c: 48, f: 3 },
+      dal:     { name: 'Dal, 2 rotis & sabzi', k: 520, p: 20, c: 78, f: 14 },
+      biryani: { name: 'Chicken biryani bowl', k: 640, p: 32, c: 82, f: 20 },
+      wrap:    { name: 'Paneer wrap', k: 480, p: 22, c: 52, f: 19 },
+      yogurt:  { name: 'Greek yogurt & almonds', k: 180, p: 14, c: 10, f: 9 },
+      chai:    { name: 'Masala chai & biscuits', k: 140, p: 3, c: 22, f: 4 },
+      shake:   { name: 'Protein shake', k: 160, p: 24, c: 6, f: 3 },
+      khichdi: { name: 'Veg khichdi with curd', k: 430, p: 16, c: 70, f: 9 },
+      bhurji:  { name: 'Egg bhurji & 2 rotis', k: 460, p: 24, c: 46, f: 19 }
+    };
+
+    const DAYS = [
+      { dow: 'Mon', date: 26, full: 'Mon, 26 Oct', meals: [['oats','8:20 AM','Breakfast'],['biryani','1:20 PM','Lunch'],['yogurt','4:10 PM','Snack'],['chai','5:30 PM','Snack'],['bhurji','8:45 PM','Dinner'],['shake','10:00 PM','Snack']] },
+      { dow: 'Tue', date: 27, full: 'Tue, 27 Oct', meals: [['idli','8:15 AM','Breakfast'],['biryani','1:00 PM','Lunch'],['yogurt','4:00 PM','Snack'],['chai','5:15 PM','Snack'],['wrap','8:20 PM','Dinner'],['bhurji','10:45 PM','Snack'],['shake','11:15 PM','Snack']] },
+      { dow: 'Wed', date: 28, full: 'Wed, 28 Oct', meals: [['poha','8:40 AM','Breakfast'],['dal','1:10 PM','Lunch'],['yogurt','4:00 PM','Snack'],['chai','5:20 PM','Snack'],['wrap','8:30 PM','Dinner'],['shake','10:15 PM','Snack']] },
+      { dow: 'Thu', date: 29, full: 'Thu, 29 Oct', meals: [['oats','8:20 AM','Breakfast'],['biryani','1:30 PM','Lunch'],['yogurt','4:15 PM','Snack'],['chai','5:30 PM','Snack'],['khichdi','8:40 PM','Dinner'],['shake','10:00 PM','Snack']] },
+      { dow: 'Fri', date: 30, full: 'Fri, 30 Oct', meals: [['idli','8:30 AM','Breakfast'],['biryani','1:15 PM','Lunch'],['chai','4:45 PM','Snack'],['yogurt','6:00 PM','Snack'],['wrap','8:50 PM','Dinner'],['bhurji','10:30 PM','Snack']] },
+      { dow: 'Sat', date: 31, full: 'Sat, 31 Oct', meals: [['poha','8:40 AM','Breakfast'],['dal','1:15 PM','Lunch'],['chai','4:30 PM','Snack'],['yogurt','5:05 PM','Snack']] },
+      { dow: 'Sun', date: 1, full: 'Sun, 1 Nov', meals: [] },
+      { dow: 'Mon', date: 2, full: 'Mon, 2 Nov', meals: [] },
+      { dow: 'Tue', date: 3, full: 'Tue, 3 Nov', meals: [] },
+      { dow: 'Wed', date: 4, full: 'Wed, 4 Nov', meals: [] }
+    ].map((d) => {
+      const meals = d.meals.map((x) => ({ ...POOL[x[0]], time: x[1], type: x[2] }));
+      const sum = (key) => meals.reduce((s, m) => s + m[key], 0);
+      return { ...d, list: meals, total: sum('k'), p: sum('p'), c: sum('c'), f: sum('f') };
+    });
+
+    const week = DAYS.map((d, i) => {
+      const r = ring(d.total, GOAL);
+      const selected = i === sel;
+      return {
+        dow: d.dow,
+        date: String(d.date),
+        d1: r.d1, d2: r.d2, c1: r.c1, c2: r.c2,
+        select: () => this.setState({ sel: i }),
+        aria: d.full + ', ' + fmt(d.total) + ' of ' + fmt(GOAL) + ' calories' + (selected ? ', selected' : ''),
+        bg: selected ? '#FFFFFF' : 'transparent',
+        border: selected ? '#E6E9EE' : 'transparent',
+        shadow: selected ? '0 1px 3px rgba(16,24,40,0.08)' : 'none',
+        dowColor: selected ? '#14181F' : '#5F6B7A',
+        dateColor: i > TODAY ? '#6B7686' : '#14181F'
+      };
+    });
+
+    const day = DAYS[sel];
+    const cr = ring(day.total, GOAL);
+    const diff = GOAL - day.total;
+    const cal = {
+      d1: cr.d1, d2: cr.d2, c1: cr.c1, c2: cr.c2,
+      eaten: fmt(day.total),
+      num: fmt(Math.abs(diff)),
+      label: cr.over ? 'kcal over' : 'kcal left',
+      numColor: cr.over ? '#C42B36' : '#14181F',
+      labelColor: cr.over ? '#C42B36' : '#5F6B7A',
+      goalLine: 'Goal ' + fmt(GOAL) + ' kcal',
+      aria: fmt(day.total) + ' of ' + fmt(GOAL) + ' calories eaten'
+    };
+
+    const MACRO_PAL = {
+      Protein: { base: '#3B6FE8', deep: '#2548B8' },
+      Carbs: { base: '#D97706', deep: '#A15C07' },
+      Fat: { base: '#8B5CF6', deep: '#6D3BD2' }
+    };
+    const macroDefs = [
+      { name: 'Protein', val: day.p, target: TARGET.p },
+      { name: 'Carbs', val: day.c, target: TARGET.c },
+      { name: 'Fat', val: day.f, target: TARGET.f }
+    ];
+    const macros = macroDefs.map((m) => {
+      const r = ring(m.val, m.target, MACRO_PAL[m.name]);
+      const left = m.target - m.val;
+      return {
+        name: m.name,
+        eaten: String(m.val),
+        dot: MACRO_PAL[m.name].base,
+        d1: r.d1, d2: r.d2, c1: r.c1, c2: r.c2,
+        status: left >= 0 ? left + 'g left' : (-left) + 'g over',
+        statusColor: left >= 0 ? '#14181F' : '#C42B36',
+        aria: m.name + ' ' + m.val + ' of ' + m.target + ' grams'
+      };
+    });
+
+    const WT = [74.2, 73.9, 73.6, 73.5, 73.0, 72.8, 72.4];
+    const wMin = Math.min(...WT), wMax = Math.max(...WT);
+    const SW = 124, SH = 52, PX = 6, PY = 8;
+    const pts = WT.map((v, i) => [
+      PX + i * (SW - 2 * PX) / (WT.length - 1),
+      PY + (wMax - v) / (wMax - wMin) * (SH - 2 * PY)
+    ]);
+    const lastPt = pts[pts.length - 1];
+    const wt = {
+      value: WT[WT.length - 1].toFixed(1),
+      delta: 'Down ' + (WT[4] - WT[WT.length - 1]).toFixed(1) + ' kg this week',
+      goal: 'Goal 68 kg',
+      chg: '−' + (WT[4] - WT[WT.length - 1]).toFixed(1) + ' kg',
+      points: pts.map((p) => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' '),
+      cx: lastPt[0].toFixed(1),
+      cy: lastPt[1].toFixed(1),
+      aria: 'Weight trend over the last 7 weigh-ins, down from 74.2 to 72.4 kilograms'
+    };
+
+    const draft = (this.state && this.state.draft != null) ? this.state.draft : '2 rotis with paneer bhurji';
+
+    const meals = day.list.map((m, i) => ({
+      name: m.name,
+      sub: m.time + ' · ' + m.type,
+      macros: 'P ' + m.p + 'g · C ' + m.c + 'g · F ' + m.f + 'g',
+      k: String(m.k),
+      bt: i === 0 ? '0 solid transparent' : '1px solid #F0F2F5'
+    }));
+
+    return {
+      week: week,
+      weekRef: (el) => {
+        if (el && !this._weekScrolled) {
+          this._weekScrolled = true;
+          el.scrollLeft = TODAY * 56 + 20 + 25 - el.clientWidth / 2;
+        }
+      },
+      cal: cal,
+      macros: macros,
+      wt: wt,
+      draft: draft,
+      onDraft: (e) => this.setState({ draft: e.target.value }),
+      meals: meals,
+      noMeals: meals.length === 0,
+      log: {
+        title: sel === TODAY ? 'Today' : day.full,
+        count: meals.length === 1 ? '1 meal' : meals.length + ' meals'
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

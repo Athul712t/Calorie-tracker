@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Onboarding</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+button{font-family:inherit;cursor:pointer}
+.noscroll{scrollbar-width:none}
+.noscroll::-webkit-scrollbar{display:none}
+.press:hover{filter:brightness(0.97)}
+.press:focus-visible{outline:2px solid #14181F;outline-offset:2px}
+.field:focus-within{border-color:#3B82F6}
+.num{font-family:inherit;outline:0}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; display: flex; flex-direction: column; background: #F7F8FA; font-family: 'DM Sans', system-ui, sans-serif; color: #14181F; overflow: hidden">
+
+  <!-- top bar -->
+  <header style="flex: none; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 12px; padding: 20px 20px 8px">
+    <button class="press" onClick="{{back}}" aria-label="Back" style="visibility: {{backVis}}; width: 44px; height: 44px; border-radius: 50%; border: 1px solid #E6E9EE; background: #FFFFFF; display: flex; align-items: center; justify-content: center">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #14181F; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </button>
+    <div role="progressbar" aria-label="Setup progress" aria-valuemin="0" aria-valuemax="{{segCount}}" aria-valuenow="{{segDone}}" style="display: {{barShow}}; gap: 6px">
+      <sc-for list="{{segs}}" as="g" hint-placeholder-count="5">
+        <span style="flex: 1; height: 6px; border-radius: 999px; background: {{g.bg}}"></span>
+      </sc-for>
+    </div>
+    <span></span>
+  </header>
+
+  <main class="noscroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 0 24px 24px">
+
+    <!-- welcome -->
+    <section style="display: {{show.welcome}}; flex-direction: column; align-items: center; text-align: center; padding-top: 70px">
+      <svg width="132" height="132" viewBox="0 0 44 44" role="img" aria-label="App logo" style="display: block">
+        <rect width="44" height="44" rx="14" style="fill: #14181f"></rect>
+        <circle cx="22" cy="22" r="10" transform="rotate(-90 22 22)" style="fill: none; stroke: #FFFFFF; stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 47.1 62.83"></circle>
+        <circle cx="22" cy="22" r="3.2" style="fill: #22A672"></circle>
+      </svg>
+      <h1 style="margin: 36px 0 0; font-size: 32px; line-height: 1.15; font-weight: 700; letter-spacing: -0.03em">Log meals with a photo or a sentence</h1>
+      <p style="margin: 14px 0 0; font-size: 16px; line-height: 1.5; color: #5F6B7A">Two minutes to set up. Then tracking takes seconds.</p>
+    </section>
+
+    <!-- goal -->
+    <section style="display: {{show.goal}}; flex-direction: column">
+      <h1 style="margin: 16px 0 0; font-size: 28px; line-height: 1.2; font-weight: 700; letter-spacing: -0.03em">What is your goal?</h1>
+      <p style="margin: 8px 0 0; font-size: 15px; color: #5F6B7A">We will set your daily calories to match.</p>
+      <div role="radiogroup" aria-label="Goal" style="display: flex; flex-direction: column; gap: 12px; margin-top: 24px">
+        <sc-for list="{{goals}}" as="o" hint-placeholder-count="3">
+          <button class="press" role="radio" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="display: flex; align-items: center; gap: 14px; padding: 18px; text-align: left; border-radius: 24px; border: 2px solid {{o.border}}; background: #FFFFFF">
+            <span style="flex: 1">
+              <span style="display: block; font-size: 18px; font-weight: 700">{{o.title}}</span>
+              <span style="display: block; margin-top: 2px; font-size: 14px; color: #5F6B7A">{{o.sub}}</span>
+            </span>
+            <span aria-hidden="true" style="flex: none; width: 26px; height: 26px; border-radius: 50%; background: {{o.dot}}; display: flex; align-items: center; justify-content: center">
+              <svg width="14" height="14" viewBox="0 0 24 24" style="display: {{o.checkShow}}; fill: none; stroke: #FFFFFF; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+            </span>
+          </button>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- about you -->
+    <section style="display: {{show.about}}; flex-direction: column">
+      <h1 style="margin: 16px 0 0; font-size: 28px; line-height: 1.2; font-weight: 700; letter-spacing: -0.03em">About you</h1>
+      <p style="margin: 8px 0 0; font-size: 15px; color: #5F6B7A">Used only to work out your daily needs.</p>
+      <div role="group" aria-label="Sex" style="display: flex; gap: 2px; margin-top: 24px; padding: 4px; background: #ECEFF3; border-radius: 999px">
+        <sc-for list="{{sexes}}" as="x" hint-placeholder-count="2">
+          <button class="press" aria-pressed="{{x.on}}" onClick="{{x.pick}}" style="flex: 1; height: 44px; border: 0; border-radius: 999px; background: {{x.bg}}; color: {{x.color}}; box-shadow: {{x.shadow}}; font-size: 15px; font-weight: 600">{{x.label}}</button>
+        </sc-for>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px">
+        <sc-for list="{{fields}}" as="f" hint-placeholder-count="4">
+          <label class="field" style="display: flex; align-items: center; justify-content: space-between; height: 64px; padding: 0 20px; background: #FFFFFF; border: 1.5px solid #ECEEF2; border-radius: 22px">
+            <span style="font-size: 16px; font-weight: 600">{{f.label}}</span>
+            <span style="display: inline-flex; align-items: baseline; gap: 6px">
+              <input class="num" type="text" inputmode="decimal" value="{{f.value}}" onInput="{{f.input}}" aria-label="{{f.label}} in {{f.unit}}" style="width: 84px; border: 0; background: transparent; padding: 0; text-align: right; font-size: 22px; font-weight: 700; color: #14181F">
+              <span style="width: 28px; font-size: 14px; font-weight: 500; color: #5F6B7A">{{f.unit}}</span>
+            </span>
+          </label>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- pace -->
+    <section style="display: {{show.pace}}; flex-direction: column">
+      <h1 style="margin: 16px 0 0; font-size: 28px; line-height: 1.2; font-weight: 700; letter-spacing: -0.03em">{{paceTitle}}</h1>
+      <p style="margin: 8px 0 0; font-size: 15px; color: #5F6B7A">A slower pace is easier to keep up.</p>
+      <div role="radiogroup" aria-label="Pace" style="display: flex; flex-direction: column; gap: 12px; margin-top: 24px">
+        <sc-for list="{{paces}}" as="o" hint-placeholder-count="3">
+          <button class="press" role="radio" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="display: flex; align-items: center; gap: 14px; padding: 18px; text-align: left; border-radius: 24px; border: 2px solid {{o.border}}; background: #FFFFFF">
+            <span style="flex: 1">
+              <span style="display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700">{{o.title}}
+                <span style="display: {{o.tagShow}}; padding: 2px 8px; border-radius: 999px; background: #E8F6EF; color: #14784C; font-size: 11px; font-weight: 700">Recommended</span>
+              </span>
+              <span style="display: block; margin-top: 2px; font-size: 14px; color: #5F6B7A">{{o.sub}}</span>
+            </span>
+            <span aria-hidden="true" style="flex: none; width: 26px; height: 26px; border-radius: 50%; background: {{o.dot}}; display: flex; align-items: center; justify-content: center">
+              <svg width="14" height="14" viewBox="0 0 24 24" style="display: {{o.checkShow}}; fill: none; stroke: #FFFFFF; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+            </span>
+          </button>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- food -->
+    <section style="display: {{show.food}}; flex-direction: column">
+      <h1 style="margin: 16px 0 0; font-size: 28px; line-height: 1.2; font-weight: 700; letter-spacing: -0.03em">How do you eat?</h1>
+      <p style="margin: 8px 0 0; font-size: 15px; color: #5F6B7A">So suggestions fit your plate.</p>
+      <div style="margin-top: 24px; font-size: 15px; font-weight: 600">Diet</div>
+      <div role="radiogroup" aria-label="Diet" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px">
+        <sc-for list="{{diets}}" as="d" hint-placeholder-count="5">
+          <button class="press" role="radio" aria-checked="{{d.on}}" onClick="{{d.pick}}" style="height: 44px; padding: 0 18px; border-radius: 999px; border: 1.5px solid {{d.border}}; background: {{d.bg}}; color: {{d.color}}; font-size: 15px; font-weight: 600">{{d.label}}</button>
+        </sc-for>
+      </div>
+      <div style="margin-top: 28px; font-size: 15px; font-weight: 600">Allergies or foods to avoid <span style="font-weight: 500; color: #5F6B7A">(optional)</span></div>
+      <div role="group" aria-label="Allergies" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px">
+        <sc-for list="{{allergies}}" as="a" hint-placeholder-count="6">
+          <button class="press" aria-pressed="{{a.on}}" onClick="{{a.pick}}" style="height: 44px; padding: 0 18px; border-radius: 999px; border: 1.5px solid {{a.border}}; background: {{a.bg}}; color: {{a.color}}; font-size: 15px; font-weight: 600">{{a.label}}</button>
+        </sc-for>
+        <button class="press" onClick="{{startAdd}}" aria-label="Add another food to avoid" style="display: {{addBtnShow}}; height: 44px; padding: 0 18px; align-items: center; gap: 6px; border-radius: 999px; border: 1.5px dashed #BFC6D0; background: transparent; color: #3A4352; font-size: 15px; font-weight: 600">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #3A4352; stroke-width: 2.4; stroke-linecap: round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+          Add other
+        </button>
+        <form onSubmit="{{submitCustom}}" style="display: {{addFormShow}}; width: 100%; align-items: center; gap: 8px">
+          <label class="field" style="flex: 1; min-width: 0; height: 48px; display: flex; align-items: center; padding: 0 18px; background: #FFFFFF; border: 1.5px solid #ECEEF2; border-radius: 999px">
+            <input class="num" type="text" value="{{cdraft}}" onInput="{{onCdraft}}" placeholder="e.g. Soy, Brinjal" aria-label="Type a food to avoid" style="flex: 1; min-width: 0; border: 0; background: transparent; padding: 0; font-size: 16px; color: #14181F">
+          </label>
+          <button type="submit" class="press" style="flex: none; height: 48px; padding: 0 20px; border: 0; border-radius: 999px; background: #14181F; color: #FFFFFF; font-size: 15px; font-weight: 700">Add</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- plan -->
+    <section style="display: {{show.plan}}; flex-direction: column">
+      <h1 style="margin: 16px 0 0; font-size: 28px; line-height: 1.2; font-weight: 700; letter-spacing: -0.03em">Your plan is ready</h1>
+      <p style="margin: 8px 0 0; font-size: 15px; color: #5F6B7A">{{plan.sentence}}</p>
+      <div style="margin-top: 24px; padding: 22px; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 28px; box-shadow: 0 1px 2px rgba(16,24,40,0.04)">
+        <div style="font-size: 13px; font-weight: 600; color: #5F6B7A">Daily calories</div>
+        <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 6px">
+          <span style="font-size: 56px; font-weight: 700; letter-spacing: -0.04em; line-height: 1">{{plan.kcal}}</span>
+          <span style="font-size: 18px; font-weight: 500; color: #5F6B7A">kcal</span>
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 20px">
+          <sc-for list="{{plan.macros}}" as="m" hint-placeholder-count="3">
+            <div style="flex: 1; padding: 12px; border-radius: 18px; background: {{m.tint}}">
+              <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: {{m.deep}}"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{m.dot}}"></span>{{m.name}}</div>
+              <div style="margin-top: 4px; font-size: 20px; font-weight: 700">{{m.g}} g</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 14px; margin-top: 12px; padding: 18px 20px; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 24px">
+        <span aria-hidden="true" style="flex: none; width: 48px; height: 48px; border-radius: 16px; background: #14181F; display: flex; align-items: center; justify-content: center">
+          <svg width="26" height="26" viewBox="0 0 24 24" style="fill: none; stroke: #FFFFFF; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><circle cx="12" cy="12" r="8.5"></circle><circle cx="12" cy="12" r="4.8"></circle><circle cx="12" cy="12" r="1.2" style="fill: #3DD598; stroke: #3DD598"></circle><path d="M12 3.5V1.5M12 22.5v-2M3.5 12h-2M22.5 12h-2" style="stroke-width: 1.6"></path></svg>
+        </span>
+        <div>
+          <div style="font-size: 16px; font-weight: 700">{{plan.goalLine}}</div>
+          <div style="margin-top: 2px; font-size: 13px; color: #5F6B7A">{{plan.goalSub}}</div>
+        </div>
+      </div>
+      <p style="margin: 16px 4px 0; font-size: 13px; line-height: 1.5; color: #5F6B7A">Estimated for a lightly active day. You can change any of this later in your profile.</p>
+    </section>
+
+  </main>
+
+  <!-- footer -->
+  <footer style="flex: none; padding: 12px 24px 28px; background: #F7F8FA">
+    <button class="press" onClick="{{next}}" aria-disabled="{{cont.disabled}}" style="display: {{cont.show}}; width: 100%; height: 56px; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: #14181F; color: #FFFFFF; font-size: 17px; font-weight: 700; opacity: {{cont.opacity}}">{{cont.label}}</button>
+    <a class="press" href="Main.dc.html" style="display: {{startShow}}; height: 56px; align-items: center; justify-content: center; border-radius: 999px; background: #14181F; color: #FFFFFF; font-size: 17px; font-weight: 700; text-decoration: none">Start tracking</a>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const step = st.step != null ? st.step : 0;
+    const goal = st.goal || 'lose';
+    const sex = st.sex || 'male';
+    const age = st.age != null ? st.age : '30';
+    const height = st.height != null ? st.height : '175';
+    const weight = st.weight != null ? st.weight : '72.4';
+    const gw = st.gw != null ? st.gw : '68';
+    const pace = st.pace != null ? st.pace : 0.5;
+    const diet = st.diet != null ? st.diet : 1;
+    const avoid = st.avoid || [];
+    const custom = st.custom || [];
+    const adding = !!st.adding;
+    const cdraft = st.cdraft || '';
+
+    const steps = ['welcome', 'goal', 'about'].concat(goal === 'maintain' ? [] : ['pace']).concat(['food', 'plan']);
+    const idx = Math.min(step, steps.length - 1);
+    const cur = steps[idx];
+    const show = {};
+    ['welcome', 'goal', 'about', 'pace', 'food', 'plan'].forEach((k) => { show[k] = cur === k ? 'flex' : 'none'; });
+
+    const A = parseFloat(age), H = parseFloat(height), W = parseFloat(weight), GW = parseFloat(gw);
+    const valid = A > 0 && H > 0 && W > 0 && (goal === 'maintain' || GW > 0);
+
+    // progress segments (everything after welcome)
+    const segCount = steps.length - 1;
+    const segs = [];
+    for (let i = 1; i < steps.length; i++) segs.push({ bg: i <= idx ? '#14181F' : '#DDE1E7' });
+
+    // goal options
+    const mkOpt = (on, pick, title, sub) => ({
+      on: on, pick: pick, title: title, sub: sub,
+      border: on ? '#14181F' : '#ECEEF2',
+      dot: on ? '#14181F' : '#E3E7EC',
+      checkShow: on ? 'block' : 'none'
+    });
+    const goals = [
+      ['lose', 'Lose weight', 'Eat a little less, steadily'],
+      ['maintain', 'Maintain weight', 'Stay where you are'],
+      ['gain', 'Gain weight', 'Eat a little more, with enough protein']
+    ].map((g) => mkOpt(goal === g[0], () => this.setState({ goal: g[0], gw: g[0] === 'gain' && parseFloat(gw) <= W ? String(Math.round((W + 4) * 10) / 10) : gw }), g[1], g[2]));
+
+    const sexes = [['male', 'Male'], ['female', 'Female']].map((x) => ({
+      label: x[1], on: sex === x[0],
+      bg: sex === x[0] ? '#FFFFFF' : 'transparent',
+      color: sex === x[0] ? '#14181F' : '#5F6B7A',
+      shadow: sex === x[0] ? '0 1px 3px rgba(16,24,40,0.10)' : 'none',
+      pick: () => this.setState({ sex: x[0] })
+    }));
+
+    const fieldDefs = [
+      ['Age', 'yrs', 'age', age], ['Height', 'cm', 'height', height], ['Weight', 'kg', 'weight', weight]
+    ];
+    if (goal !== 'maintain') fieldDefs.push(['Goal weight', 'kg', 'gw', gw]);
+    const fields = fieldDefs.map((f) => ({
+      label: f[0], unit: f[1], value: f[3],
+      input: (e) => { const o = {}; o[f[2]] = e.target.value; this.setState(o); }
+    }));
+
+    // pace
+    const PACES = [
+      [0.25, 'Gentle', 'Easiest to stick to'],
+      [0.5, 'Steady', 'The best balance for most people'],
+      [0.75, 'Faster', 'Needs more discipline']
+    ];
+    const verb = goal === 'gain' ? 'Gain' : 'Lose';
+    const paces = PACES.map((p) => {
+      const o = mkOpt(pace === p[0], () => this.setState({ pace: p[0] }), p[1] + ' · ' + p[0] + ' kg a week', p[2]);
+      o.tagShow = p[0] === 0.5 ? 'inline-block' : 'none';
+      return o;
+    });
+    const paceTitle = verb + ' how fast?';
+
+    // food
+    const chip = (label, on, pick) => ({
+      label: label, on: on, pick: pick,
+      bg: on ? '#14181F' : '#FFFFFF',
+      color: on ? '#FFFFFF' : '#3A4352',
+      border: on ? '#14181F' : '#E3E7EC'
+    });
+    const diets = ['Vegetarian', 'Eggetarian', 'Non-veg', 'Vegan', 'Jain'].map((l, i) =>
+      chip(l, i === diet, () => this.setState({ diet: i })));
+    const allergies = ['Peanuts', 'Dairy', 'Gluten', 'Eggs', 'Shellfish', 'Mushrooms'].map((l) =>
+      chip(l, avoid.indexOf(l) >= 0, () => this.setState({ avoid: avoid.indexOf(l) >= 0 ? avoid.filter((x) => x !== l) : avoid.concat([l]) })));
+    const customChips = custom.map((l, i) =>
+      chip(l + '  ×', true, () => this.setState({ custom: custom.filter((_, j) => j !== i) })));
+    const allergyChips = allergies.concat(customChips);
+    const addCustom = () => {
+      const t = cdraft.trim();
+      if (!t) { this.setState({ adding: false, cdraft: '' }); return; }
+      const dupe = custom.concat(['Peanuts', 'Dairy', 'Gluten', 'Eggs', 'Shellfish', 'Mushrooms']).some((x) => x.toLowerCase() === t.toLowerCase());
+      this.setState({ custom: dupe ? custom : custom.concat([t.charAt(0).toUpperCase() + t.slice(1)]), adding: false, cdraft: '' });
+    };
+
+    // plan
+    const bmr = 10 * W + 6.25 * H - 5 * A + (sex === 'male' ? 5 : -161);
+    const tdee = bmr * 1.4;
+    const adj = goal === 'lose' ? -pace * 1100 : (goal === 'gain' ? pace * 1100 : 0);
+    const kcalN = valid ? Math.max(1200, Math.round((tdee + adj) / 50) * 50) : 0;
+    const pG = Math.round(1.6 * (W || 0));
+    const fG = Math.round(kcalN * 0.25 / 9);
+    const cG = Math.max(0, Math.round((kcalN - pG * 4 - fG * 9) / 4));
+    const diff = Math.abs((W || 0) - (GW || 0));
+    const weeks = pace > 0 ? Math.ceil(diff / pace) : 0;
+    const when = new Date(2026, 10, 1 + weeks * 7).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    const plan = {
+      kcal: kcalN.toLocaleString('en-IN'),
+      sentence: goal === 'lose' ? 'Built to take off ' + pace + ' kg a week.' : (goal === 'gain' ? 'Built to add ' + pace + ' kg a week.' : 'Built to keep your weight steady.'),
+      macros: [
+        { name: 'Protein', g: pG, dot: '#3B6FE8', deep: '#2548B8', tint: '#EEF3FE' },
+        { name: 'Carbs', g: cG, dot: '#D97706', deep: '#8A4F05', tint: '#FDF3E3' },
+        { name: 'Fat', g: fG, dot: '#8B5CF6', deep: '#6D3BD2', tint: '#F3EEFE' }
+      ],
+      goalLine: goal === 'maintain' ? 'Hold at ' + W + ' kg' : 'Reach ' + GW + ' kg by ' + when,
+      goalSub: goal === 'maintain' ? 'Log what you eat and we will keep you on track.' : 'About ' + weeks + ' weeks at ' + pace + ' kg a week'
+    };
+
+    // footer
+    const isPlan = cur === 'plan';
+    const blocked = cur === 'about' && !valid;
+    const cont = {
+      show: isPlan ? 'none' : 'flex',
+      label: cur === 'welcome' ? 'Login' : (cur === 'food' ? 'See my plan' : 'Continue'),
+      disabled: blocked,
+      opacity: blocked ? 0.4 : 1
+    };
+
+    return {
+      show: show, segs: segs, segCount: segCount, segDone: Math.max(0, idx),
+      barShow: cur === 'welcome' ? 'none' : 'flex',
+      backVis: cur === 'welcome' ? 'hidden' : 'visible',
+      goals: goals, sexes: sexes, fields: fields, paces: paces, paceTitle: paceTitle,
+      diets: diets, allergies: allergyChips,
+      addBtnShow: adding ? 'none' : 'inline-flex', addFormShow: adding ? 'flex' : 'none', cdraft: cdraft,
+      startAdd: () => this.setState({ adding: true }),
+      onCdraft: (e) => this.setState({ cdraft: e.target.value }),
+      submitCustom: (e) => { if (e && e.preventDefault) e.preventDefault(); addCustom(); }, plan: plan, cont: cont,
+      startShow: isPlan ? 'flex' : 'none',
+      back: () => this.setState({ step: Math.max(0, idx - 1) }),
+      next: () => { if (!blocked) this.setState({ step: idx + 1 }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -5,12 +5,15 @@ import com.example.R
 import com.example.model.Meal
 import com.example.model.MenuItem
 import com.example.model.UserGoal
+import com.example.model.UserProfile
+import com.example.model.WeightLog
 import com.example.util.OperationType
 import com.example.util.handleFirestoreError
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.snapshots
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
@@ -116,6 +119,7 @@ class CalorieRepository(private val db: FirebaseFirestore) {
             "imageUrl" to meal.imageUrl,
             "dateString" to meal.dateString,
             "hourOfDay" to meal.hourOfDay,
+            "ingredientsJson" to meal.ingredientsJson,
             "userId" to uid,
             "createdAt" to FieldValue.serverTimestamp(),
             "updatedAt" to FieldValue.serverTimestamp()
@@ -195,6 +199,7 @@ class CalorieRepository(private val db: FirebaseFirestore) {
             "imageUrl" to meal.imageUrl,
             "dateString" to meal.dateString,
             "hourOfDay" to meal.hourOfDay,
+            "ingredientsJson" to meal.ingredientsJson,
             "userId" to uid,
             "updatedAt" to FieldValue.serverTimestamp()
         )
@@ -230,6 +235,11 @@ class CalorieRepository(private val db: FirebaseFirestore) {
             "proteinGoal" to goal.proteinGoal,
             "carbsGoal" to goal.carbsGoal,
             "fatGoal" to goal.fatGoal,
+            "goalType" to goal.goalType,
+            "goalWeightKg" to goal.goalWeightKg,
+            "startWeightKg" to goal.startWeightKg,
+            "paceKgPerWeek" to goal.paceKgPerWeek,
+            "manual" to goal.manual,
             "userId" to uid,
             "createdAt" to FieldValue.serverTimestamp(),
             "updatedAt" to FieldValue.serverTimestamp()
@@ -240,6 +250,109 @@ class CalorieRepository(private val db: FirebaseFirestore) {
             throw e
         } catch (e: Exception) {
             handleFirestoreError(e, OperationType.UPDATE, docRef.path)
+            throw e
+        }
+    }
+
+    /** Meals from [fromDate] (yyyy-MM-dd) onwards, used for the week strip and the history calendar. */
+    fun observeMealsSince(userId: String, fromDate: String): Flow<List<Meal>> = flow {
+        val path = "users/$userId/meals"
+        val query = db.collection("users").document(userId).collection("meals")
+            .whereGreaterThanOrEqualTo("dateString", fromDate)
+
+        query.snapshots()
+            .map { snapshot ->
+                snapshot.documents.mapNotNull { doc ->
+                    try {
+                        doc.toObject(Meal::class.java)?.copy(id = doc.id)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }.sortedBy { it.createdAt?.toDate()?.time ?: 0L }
+            }
+            .catch { error ->
+                if (error is Exception) handleFirestoreError(error, OperationType.LIST, path)
+                throw error
+            }
+            .collect { emit(it) }
+    }
+
+    fun observeProfile(userId: String): Flow<UserProfile?> = flow {
+        val docRef = db.collection("users").document(userId).collection("profile").document("current")
+        docRef.snapshots()
+            .map { snapshot ->
+                if (snapshot.exists()) snapshot.toObject(UserProfile::class.java) else null
+            }
+            .catch { error ->
+                if (error is Exception) handleFirestoreError(error, OperationType.GET, docRef.path)
+                throw error
+            }
+            .collect { emit(it) }
+    }
+
+    suspend fun saveProfile(profile: UserProfile, explicitUserId: String? = null) {
+        val uid = requireUserId(explicitUserId)
+        val docRef = db.collection("users").document(uid).collection("profile").document("current")
+        val payload = hashMapOf<String, Any>(
+            "name" to profile.name,
+            "sex" to profile.sex,
+            "age" to profile.age,
+            "heightCm" to profile.heightCm,
+            "activity" to profile.activity,
+            "dietTags" to profile.dietTags,
+            "userId" to uid,
+            "updatedAt" to FieldValue.serverTimestamp()
+        )
+        try {
+            docRef.set(payload).await()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            handleFirestoreError(e, OperationType.UPDATE, docRef.path)
+            throw e
+        }
+    }
+
+    /** Latest weigh-ins, newest first. */
+    fun observeWeights(userId: String): Flow<List<WeightLog>> = flow {
+        val path = "users/$userId/weights"
+        val query = db.collection("users").document(userId).collection("weights")
+            .orderBy("dateString", Query.Direction.DESCENDING)
+            .limit(120)
+
+        query.snapshots()
+            .map { snapshot ->
+                snapshot.documents.mapNotNull { doc ->
+                    try {
+                        doc.toObject(WeightLog::class.java)?.copy(id = doc.id)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+            }
+            .catch { error ->
+                if (error is Exception) handleFirestoreError(error, OperationType.LIST, path)
+                throw error
+            }
+            .collect { emit(it) }
+    }
+
+    /** One weigh-in per day: logging again on the same day replaces it. */
+    suspend fun saveWeight(kg: Double, dateString: String, explicitUserId: String? = null) {
+        val uid = requireUserId(explicitUserId)
+        val docRef = db.collection("users").document(uid).collection("weights").document(dateString)
+        val payload = hashMapOf<String, Any>(
+            "dateString" to dateString,
+            "kg" to kg,
+            "userId" to uid,
+            "createdAt" to FieldValue.serverTimestamp()
+        )
+        try {
+            docRef.set(payload).await()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            handleFirestoreError(e, OperationType.CREATE, docRef.path)
             throw e
         }
     }

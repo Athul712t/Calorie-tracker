@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Progress photos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+button{font-family:inherit;cursor:pointer}
+.noscroll{scrollbar-width:none}
+.noscroll::-webkit-scrollbar{display:none}
+.press:hover{filter:brightness(0.97)}
+.press:focus-visible{outline:2px solid #14181F;outline-offset:2px}
+.dark .press:focus-visible{outline-color:#FFFFFF}
+input[type=range]{width:100%;margin:0;accent-color:#3B82F6;height:28px}
+input.tl{-webkit-appearance:none;appearance:none;background:transparent;height:32px;margin:0;outline:0;cursor:grab}
+input.tl:active{cursor:grabbing}
+input.tl::-webkit-slider-runnable-track{height:8px;border-radius:999px;background:linear-gradient(90deg,#22A672 var(--p),#E4E8EE var(--p))}
+input.tl::-moz-range-track{height:8px;border-radius:999px;background:#E4E8EE}
+input.tl::-moz-range-progress{height:8px;border-radius:999px;background:#22A672}
+input.tl::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;margin-top:-10px;border-radius:50%;background:#FFFFFF;border:5px solid #22A672;box-shadow:0 2px 8px rgba(20,24,31,0.25)}
+input.tl::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#FFFFFF;border:5px solid #22A672;box-shadow:0 2px 8px rgba(20,24,31,0.25)}
+input.tl:focus-visible::-webkit-slider-thumb{outline:2px solid #14181F;outline-offset:2px}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; display: flex; flex-direction: column; background: #F7F8FA; font-family: 'DM Sans', system-ui, sans-serif; color: #14181F; overflow: hidden">
+
+  <header style="flex: none; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; padding: 20px 20px 8px">
+    <a class="press" href="Progress.dc.html" aria-label="Back to Progress" style="width: 44px; height: 44px; border-radius: 50%; border: 1px solid #E6E9EE; background: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #14181F; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </a>
+    <h1 style="margin: 0; text-align: center; font-size: 18px; font-weight: 700; letter-spacing: -0.01em">Progress photos</h1>
+    <span></span>
+  </header>
+
+  <main class="noscroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 8px 20px 12px">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px 12px">
+      <sc-for list="{{photos}}" as="p" hint-placeholder-count="4">
+        <button class="press" onClick="{{p.open}}" aria-label="{{p.openLabel}}" style="padding: 0; border: 0; background: transparent; text-align: left">
+          <div style="position: relative; aspect-ratio: 3 / 4; border-radius: 22px; background: {{p.bg}}; overflow: hidden; border: 1px solid rgba(16,24,40,0.05)">
+            <svg viewBox="0 0 120 160" width="100%" height="100%" preserveAspectRatio="xMidYMax meet" role="img" aria-label="{{p.aria}}" style="display: block">
+              <rect x="{{p.l1x}}" y="104" width="{{p.l1w}}" height="52" rx="6" style="fill: {{p.fg}}"></rect>
+              <rect x="{{p.l2x}}" y="104" width="{{p.l2w}}" height="52" rx="6" style="fill: {{p.fg}}"></rect>
+              <rect x="{{p.a1x}}" y="48" width="{{p.aw}}" height="50" rx="4.5" style="fill: {{p.fg}}"></rect>
+              <rect x="{{p.a2x}}" y="48" width="{{p.aw}}" height="50" rx="4.5" style="fill: {{p.fg}}"></rect>
+              <rect x="{{p.tx}}" y="44" width="{{p.tw}}" height="64" rx="14" style="fill: {{p.fg}}"></rect>
+              <circle cx="{{p.hx}}" cy="28" r="13" style="fill: {{p.fg}}"></circle>
+            </svg>
+          </div>
+          <div style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 8px; padding: 0 4px">
+            <span style="font-size: 15px; font-weight: 600">{{p.label}}</span>
+            <span style="font-size: 12px; color: #5F6B7A">{{cur.date}}</span>
+          </div>
+        </button>
+      </sc-for>
+    </div>
+  </main>
+
+  <!-- timeline -->
+  <section aria-label="Timeline" style="flex: none; margin: 8px 20px 96px; padding: 16px 18px 14px; background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 28px; box-shadow: 0 4px 16px rgba(16,24,40,0.06)">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+      <div>
+        <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #5F6B7A">Memory lane</div>
+        <div style="font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin-top: 2px">{{cur.date}}</div>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px">
+        <span style="font-size: 18px; font-weight: 700">{{cur.weight}}</span>
+        <span style="padding: 3px 10px; border-radius: 999px; background: #E8F6EF; color: #14784C; font-size: 12px; font-weight: 700">{{cur.since}}</span>
+      </div>
+    </div>
+    <div style="margin-top: 14px; padding: 0 2px">
+      <input class="tl" type="range" min="0" max="{{maxIdx}}" step="1" value="{{idx}}" onInput="{{onSlide}}" aria-label="Move through time" aria-valuetext="{{cur.date}}" style="--p: {{pct}}">
+      <div aria-hidden="true" style="display: flex; justify-content: space-between; padding: 0 12px; margin-top: -2px">
+        <sc-for list="{{ticks}}" as="t" hint-placeholder-count="10">
+          <span style="width: 5px; height: 5px; border-radius: 50%; background: {{t.bg}}"></span>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; font-weight: 600; color: #5F6B7A"><span>{{firstDate}}</span><span>{{lastDate}}</span></div>
+  </section>
+
+
+  <!-- capture -->
+  <footer style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; justify-content: center; padding: 44px 0 24px; background: linear-gradient(180deg, #F7F8FA00 0%, #F7F8FA 45%); pointer-events: none">
+    <button class="press" style="pointer-events: auto; height: 56px; padding: 0 28px 0 22px; border: 0; border-radius: 999px; background: #14181F; color: #FFFFFF; display: inline-flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; box-shadow: 0 8px 24px rgba(20,24,31,0.28)">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #FFFFFF; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.2l1.1-1.6A1 1 0 0 1 9.6 4h4.8a1 1 0 0 1 .8.4L16.3 6h1.2A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z"></path><circle cx="12" cy="12.5" r="3.2"></circle></svg>
+      Capture
+    </button>
+  </footer>
+
+  <!-- viewer -->
+  <div class="dark" role="dialog" aria-modal="true" aria-label="Photo viewer" style="position: absolute; inset: 0; z-index: 20; display: {{viewShow}}; flex-direction: column; background: #101319; color: #FFFFFF">
+    <div style="flex: none; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; padding: 20px 20px 8px">
+      <button class="press" onClick="{{closeView}}" aria-label="Close photo" style="width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="fill: none; stroke: #FFFFFF; stroke-width: 2.2; stroke-linecap: round"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg>
+      </button>
+      <div style="text-align: center">
+        <div style="font-size: 17px; font-weight: 700">{{big.label}}</div>
+        <div style="font-size: 12px; color: #B6BEC9">{{cur.date}} · {{cur.weight}}</div>
+      </div>
+      <span></span>
+    </div>
+    <div style="flex: none; display: flex; justify-content: center; padding: 8px 20px 0">
+      <div style="position: relative; height: 430px; aspect-ratio: 3 / 4; border-radius: 26px; background: {{big.bg}}; overflow: hidden">
+        <svg viewBox="0 0 120 160" width="100%" height="100%" preserveAspectRatio="xMidYMax meet" role="img" aria-label="{{big.aria}}" style="display: block">
+          <rect x="{{big.l1x}}" y="104" width="{{big.l1w}}" height="52" rx="6" style="fill: {{big.fg}}"></rect>
+          <rect x="{{big.l2x}}" y="104" width="{{big.l2w}}" height="52" rx="6" style="fill: {{big.fg}}"></rect>
+          <rect x="{{big.a1x}}" y="48" width="{{big.aw}}" height="50" rx="4.5" style="fill: {{big.fg}}"></rect>
+          <rect x="{{big.a2x}}" y="48" width="{{big.aw}}" height="50" rx="4.5" style="fill: {{big.fg}}"></rect>
+          <rect x="{{big.tx}}" y="44" width="{{big.tw}}" height="64" rx="14" style="fill: {{big.fg}}"></rect>
+          <circle cx="{{big.hx}}" cy="28" r="13" style="fill: {{big.fg}}"></circle>
+        </svg>
+      </div>
+    </div>
+    <div role="group" aria-label="Angle" style="flex: none; display: flex; justify-content: center; gap: 6px; margin-top: 14px">
+      <sc-for list="{{angleTabs}}" as="t" hint-placeholder-count="4">
+        <button class="press" aria-pressed="{{t.on}}" onClick="{{t.pick}}" style="height: 32px; padding: 0 14px; border: 0; border-radius: 999px; background: {{t.bg}}; color: {{t.color}}; font-size: 13px; font-weight: 600">{{t.label}}</button>
+      </sc-for>
+    </div>
+    <div style="flex: none; margin: 14px 20px 0; padding: 12px 16px 10px; border-radius: 22px; background: rgba(255,255,255,0.08)">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; font-size: 13px"><span style="font-weight: 700">{{cur.date}}</span><span style="color: #B6BEC9">{{cur.weight}} · {{cur.since}}</span></div>
+      <input type="range" min="0" max="{{maxIdx}}" step="1" value="{{idx}}" onInput="{{onSlide}}" aria-label="Move through time" aria-valuetext="{{cur.date}}" style="margin-top: 4px">
+      <div style="display: flex; justify-content: space-between; font-size: 12px; color: #B6BEC9"><span>{{firstDate}}</span><span>{{lastDate}}</span></div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const CHECKINS = [
+      { d: 'Aug 1', w: 76.0 }, { d: 'Aug 10', w: 75.6 }, { d: 'Aug 19', w: 75.4 },
+      { d: 'Aug 28', w: 75.0 }, { d: 'Sep 6', w: 74.6 }, { d: 'Sep 15', w: 74.4 },
+      { d: 'Sep 24', w: 74.2 }, { d: 'Oct 3', w: 73.6 }, { d: 'Oct 17', w: 73.0 },
+      { d: 'Oct 31', w: 72.4 }
+    ];
+    const last = CHECKINS.length - 1;
+    const idx = st.idx != null ? st.idx : last;
+    const open = st.open != null ? st.open : null;
+    const C = CHECKINS[idx];
+
+    const ANG = [
+      { k: 'Front', bg: '#E9EFFD', fg: '#34426B', side: false },
+      { k: 'Left', bg: '#E8F6EF', fg: '#2B5A48', side: true },
+      { k: 'Right', bg: '#FDF3E3', fg: '#6B4A17', side: true },
+      { k: 'Back', bg: '#F3EEFE', fg: '#4D3887', side: false }
+    ];
+    const n1 = (v) => v.toFixed(1);
+    const geo = (a, w) => {
+      const f = 1 + (w - 72.4) / 36;
+      const g = { label: a.k, bg: a.bg, fg: a.fg };
+      if (!a.side) {
+        const tw = 46 * f, lw = 15 * f, aw = 9 * f;
+        g.tw = n1(tw); g.tx = n1(60 - tw / 2);
+        g.l1w = n1(lw); g.l1x = n1(59 - lw); g.l2w = n1(lw); g.l2x = n1(61);
+        g.aw = n1(aw); g.a1x = n1(60 - tw / 2 - aw - 2); g.a2x = n1(60 + tw / 2 + 2);
+        g.hx = '60';
+      } else {
+        const tw = 30 * f, lw = 20 * f;
+        g.tw = n1(tw); g.tx = n1(60 - tw / 2);
+        g.l1w = n1(lw); g.l1x = n1(60 - lw / 2); g.l2w = '0'; g.l2x = '60';
+        g.aw = '0'; g.a1x = '60'; g.a2x = '60';
+        g.hx = '62';
+      }
+      g.aria = a.k + ' photo, ' + C.d + ' (placeholder illustration)';
+      return g;
+    };
+
+    const photos = ANG.map((a, i) => Object.assign(geo(a, C.w), {
+      openLabel: 'Open ' + a.k + ' photo from ' + C.d,
+      open: () => this.setState({ open: i })
+    }));
+    const big = open != null ? photos[open] : photos[0];
+    const angleTabs = ANG.map((a, i) => ({
+      label: a.k, on: i === open,
+      bg: i === open ? '#FFFFFF' : 'rgba(255,255,255,0.12)',
+      color: i === open ? '#101319' : '#FFFFFF',
+      pick: () => this.setState({ open: i })
+    }));
+
+    const diff = CHECKINS[0].w - C.w;
+    const cur = {
+      date: C.d,
+      weight: C.w.toFixed(1) + ' kg',
+      since: diff > 0 ? '−' + diff.toFixed(1) + ' kg since start' : 'Starting point'
+    };
+
+    return {
+      cur: cur, idx: idx, maxIdx: last,
+      pct: (last ? idx / last * 100 : 0).toFixed(1) + '%',
+      ticks: CHECKINS.map((c, i) => ({ bg: i <= idx ? '#22A672' : '#C9D0DA' })),
+      firstDate: CHECKINS[0].d, lastDate: CHECKINS[last].d,
+      photos: photos, big: big, angleTabs: angleTabs,
+      viewShow: open != null ? 'flex' : 'none',
+      closeView: () => this.setState({ open: null }),
+      onSlide: (e) => this.setState({ idx: parseInt(e.target.value, 10) })
+    };
+  }
+}
+</script>
+</body>
+</html>

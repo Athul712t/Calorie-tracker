@@ -7,6 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.data.AiFoodService
 import com.example.data.CalorieRepository
 import com.example.data.IndianFoodDatabase
+import com.example.data.IngredientJson
+import com.example.model.MealIngredient
+import com.example.model.UserProfile
+import com.example.model.WeightLog
+import kotlinx.coroutines.Job
 import com.example.model.IndianFoodItem
 import com.example.model.Meal
 import com.example.model.MenuItem
@@ -39,7 +44,18 @@ data class CalorieUiState(
     val failedAiNotes: String = "",
     val pendingMeal: MealParsedResult? = null,
     val indianSuggestions: List<IndianFoodItem> = emptyList(),
-    val isGeneratingSuggestions: Boolean = false
+    val isGeneratingSuggestions: Boolean = false,
+    /** The signed-in user's profile, or null until onboarding is finished. */
+    val profile: UserProfile? = null,
+    /** True once the profile has been read from the server (even if it does not exist yet). */
+    val sessionReady: Boolean = false,
+    /** Weigh-ins, newest first. */
+    val weights: List<WeightLog> = emptyList(),
+    /** Meals from the last 35 days, used by the week strip and history. */
+    val recentMeals: List<Meal> = emptyList(),
+    /** Set while a saved meal is open for editing. Null when the meal on screen is new. */
+    val editingMealId: String? = null,
+    val chatBusy: Boolean = false
 ) {
     val totalCalories: Double get() = meals.sumOf { it.calories }
     val totalProtein: Double get() = meals.sumOf { it.protein }
@@ -67,6 +83,12 @@ fun getTodayDateString(): String {
     return sdf.format(Date())
 }
 
+fun daysAgoString(days: Int): String {
+    val cal = Calendar.getInstance()
+    cal.add(Calendar.DAY_OF_YEAR, -days)
+    return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(cal.time)
+}
+
 class CalorieTrackerViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository = CalorieRepository(application.applicationContext)
@@ -81,37 +103,68 @@ class CalorieTrackerViewModel(application: Application) : AndroidViewModel(appli
         if (currentUserId == userId) return
         currentUserId = userId
         observeData(userId, _uiState.value.selectedDate)
-        refreshIndianSuggestions()
     }
 
+    /** Called when the user signs out. */
+    fun clearUser() {
+        dataJobs.forEach { it.cancel() }
+        dataJobs = emptyList()
+        currentUserId = null
+        _uiState.value = CalorieUiState()
+    }
+
+    private var dataJobs: List<Job> = emptyList()
+
     private fun observeData(userId: String, dateString: String) {
-        viewModelScope.launch {
-            repository.observeMeals(userId, dateString)
-                .catch { emit(emptyList()) }
-                .collect { mealsList ->
-                    _uiState.value = _uiState.value.copy(meals = mealsList)
-                    refreshIndianSuggestions()
-                }
-        }
+        dataJobs.forEach { it.cancel() }
+        val fromDate = daysAgoString(35)
 
-        viewModelScope.launch {
-            repository.observeMenuItems(userId)
-                .catch { emit(emptyList()) }
-                .collect { menuList ->
-                    _uiState.value = _uiState.value.copy(menuItems = menuList)
-                }
-        }
-
-        viewModelScope.launch {
-            repository.observeUserGoal(userId)
-                .catch { emit(null) }
-                .collect { savedGoal ->
-                    if (savedGoal != null) {
-                        _uiState.value = _uiState.value.copy(goal = savedGoal)
-                        refreshIndianSuggestions()
+        dataJobs = listOf(
+            viewModelScope.launch {
+                repository.observeMeals(userId, dateString)
+                    .catch { emit(emptyList()) }
+                    .collect { mealsList ->
+                        _uiState.value = _uiState.value.copy(meals = mealsList)
                     }
-                }
-        }
+            },
+            viewModelScope.launch {
+                repository.observeMealsSince(userId, fromDate)
+                    .catch { emit(emptyList()) }
+                    .collect { list ->
+                        _uiState.value = _uiState.value.copy(recentMeals = list)
+                    }
+            },
+            viewModelScope.launch {
+                repository.observeMenuItems(userId)
+                    .catch { emit(emptyList()) }
+                    .collect { menuList ->
+                        _uiState.value = _uiState.value.copy(menuItems = menuList)
+                    }
+            },
+            viewModelScope.launch {
+                repository.observeUserGoal(userId)
+                    .catch { emit(null) }
+                    .collect { savedGoal ->
+                        if (savedGoal != null) {
+                            _uiState.value = _uiState.value.copy(goal = savedGoal)
+                        }
+                    }
+            },
+            viewModelScope.launch {
+                repository.observeProfile(userId)
+                    .catch { emit(null) }
+                    .collect { p ->
+                        _uiState.value = _uiState.value.copy(profile = p, sessionReady = true)
+                    }
+            },
+            viewModelScope.launch {
+                repository.observeWeights(userId)
+                    .catch { emit(emptyList()) }
+                    .collect { list ->
+                        _uiState.value = _uiState.value.copy(weights = list)
+                    }
+            }
+        )
     }
 
     fun selectDate(newDate: String) {
@@ -125,6 +178,8 @@ class CalorieTrackerViewModel(application: Application) : AndroidViewModel(appli
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
                 isAnalyzing = true,
+                pendingMeal = null,
+                editingMealId = null,
                 analyzingMessage = if (bitmap != null) "Analyzing photo & context with AI..." else "Estimating nutrition via ICMR-NIN IFCT standards...",
                 errorMessage = null
             )
@@ -141,7 +196,8 @@ class CalorieTrackerViewModel(application: Application) : AndroidViewModel(appli
                 )
                 _uiState.value = _uiState.value.copy(
                     isAnalyzing = false,
-                    pendingMeal = parsed,
+                    editingMealId = null,
+                    pendingMeal = parsed.copy(servings = 1.0),
                     failedAiQuery = null,
                     failedAiBitmap = null,
                     failedAiNotes = "",
@@ -275,7 +331,8 @@ class CalorieTrackerViewModel(application: Application) : AndroidViewModel(appli
                 dateString = _uiState.value.selectedDate,
                 hourOfDay = currentHour,
                 userId = uid,
-                ingredientsSummary = summary
+                ingredientsSummary = summary,
+                ingredientsJson = IngredientJson.toJson(result.ingredients)
             )
 
             try {
@@ -427,5 +484,223 @@ class CalorieTrackerViewModel(application: Application) : AndroidViewModel(appli
 
     fun clearError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
+    }
+    // ---------------------------------------------------------------------
+    // Added for the new screens
+    // ---------------------------------------------------------------------
+
+    /** Saves the answers from onboarding: profile, goal with targets, and the first weigh-in. */
+    fun saveOnboarding(
+        profile: UserProfile,
+        goal: UserGoal,
+        weightKg: Double,
+        onDone: () -> Unit
+    ) {
+        val uid = currentUserId ?: Firebase.auth.currentUser?.uid ?: return
+        viewModelScope.launch {
+            try {
+                repository.saveProfile(profile, uid)
+                repository.saveUserGoal(goal, uid)
+                repository.saveWeight(weightKg, getTodayDateString(), uid)
+                onDone()
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(errorMessage = "Could not save your plan: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun saveProfile(profile: UserProfile) {
+        val uid = currentUserId ?: Firebase.auth.currentUser?.uid ?: return
+        viewModelScope.launch {
+            try {
+                repository.saveProfile(profile, uid)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(errorMessage = "Could not save profile: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun saveGoal(goal: UserGoal) {
+        val uid = currentUserId ?: Firebase.auth.currentUser?.uid ?: return
+        viewModelScope.launch {
+            try {
+                repository.saveUserGoal(goal, uid)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(errorMessage = "Could not save goal: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun logWeight(kg: Double) {
+        val uid = currentUserId ?: Firebase.auth.currentUser?.uid ?: return
+        viewModelScope.launch {
+            try {
+                repository.saveWeight(kg, getTodayDateString(), uid)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(errorMessage = "Could not save weight: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    /** Opens a logged meal for editing in the meal detail screen. */
+    fun openSavedMeal(mealId: String): Boolean {
+        val meal = _uiState.value.recentMeals.firstOrNull { it.id == mealId }
+            ?: _uiState.value.meals.firstOrNull { it.id == mealId }
+            ?: return false
+        var items = IngredientJson.fromJson(meal.ingredientsJson)
+        if (items.isEmpty()) {
+            // Older meals have no item list: show the meal as one item.
+            val q = if (meal.servings > 0) meal.servings else 1.0
+            items = listOf(
+                MealIngredient(
+                    name = meal.name,
+                    portion = "1 serving",
+                    quantity = q,
+                    unitCalories = meal.calories / q,
+                    unitProtein = meal.protein / q,
+                    unitCarbs = meal.carbs / q,
+                    unitFat = meal.fat / q,
+                    unitFiber = meal.fiber / q
+                )
+            )
+        }
+        val type = try { MealType.valueOf(meal.mealType.uppercase()) } catch (e: Exception) { MealType.LUNCH }
+        _uiState.value = _uiState.value.copy(
+            editingMealId = meal.id,
+            pendingMeal = MealParsedResult(
+                name = meal.name,
+                mealType = type,
+                calories = meal.calories,
+                protein = meal.protein,
+                carbs = meal.carbs,
+                fat = meal.fat,
+                fiber = meal.fiber,
+                servings = 1.0,
+                notes = meal.contextNotes,
+                imageBase64 = meal.imageUrl.ifBlank { null },
+                ingredients = items
+            )
+        )
+        return true
+    }
+
+    /** Starts a new meal from foods picked in Add food. */
+    fun startMealFromItems(items: List<MealIngredient>, type: MealType) {
+        if (items.isEmpty()) return
+        val name = items.joinToString(" + ") { it.name }
+        _uiState.value = _uiState.value.copy(
+            editingMealId = null,
+            pendingMeal = MealParsedResult(
+                name = name,
+                mealType = type,
+                calories = items.sumOf { it.totalCalories },
+                protein = items.sumOf { it.totalProtein },
+                carbs = items.sumOf { it.totalCarbs },
+                fat = items.sumOf { it.totalFat },
+                fiber = items.sumOf { it.totalFiber },
+                ingredients = items,
+                isAiGenerated = false
+            )
+        )
+    }
+
+    fun setPendingMealType(type: MealType) {
+        val current = _uiState.value.pendingMeal ?: return
+        _uiState.value = _uiState.value.copy(pendingMeal = current.copy(mealType = type))
+    }
+
+    /** Scales every item so the whole meal becomes [newServings] times its current size. */
+    fun setPendingPortion(newServings: Double) {
+        val current = _uiState.value.pendingMeal ?: return
+        if (newServings <= 0.0 || current.servings <= 0.0) return
+        val factor = newServings / current.servings
+        val items = current.ingredients.map { it.copy(quantity = it.quantity * factor) }
+        _uiState.value = _uiState.value.copy(
+            pendingMeal = current.copy(
+                servings = newServings,
+                ingredients = items,
+                calories = items.sumOf { it.totalCalories },
+                protein = items.sumOf { it.totalProtein },
+                carbs = items.sumOf { it.totalCarbs },
+                fat = items.sumOf { it.totalFat },
+                fiber = items.sumOf { it.totalFiber }
+            )
+        )
+    }
+
+    /** Chat edit. [onResult] gets the assistant's reply, or an error message with success = false. */
+    fun applyChatEdit(instruction: String, onResult: (success: Boolean, reply: String) -> Unit) {
+        val current = _uiState.value.pendingMeal ?: return
+        if (instruction.isBlank()) return
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(chatBusy = true)
+            try {
+                val updated = aiService.refineMeal(current, instruction)
+                _uiState.value = _uiState.value.copy(
+                    chatBusy = false,
+                    pendingMeal = updated.copy(servings = 1.0)
+                )
+                onResult(true, updated.notes.ifBlank { "Updated." })
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(chatBusy = false)
+                onResult(false, e.localizedMessage ?: "That did not work. Please try again.")
+            }
+        }
+    }
+
+    /** Saves the meal on screen: updates the saved meal if one is open, otherwise adds a new one. */
+    fun saveMealFromPending(onSaved: () -> Unit) {
+        val uid = currentUserId ?: Firebase.auth.currentUser?.uid ?: return
+        val result = _uiState.value.pendingMeal ?: return
+        val editingId = _uiState.value.editingMealId
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY).toLong()
+            val existing = editingId?.let { id -> _uiState.value.recentMeals.firstOrNull { it.id == id } }
+            val meal = Meal(
+                id = editingId ?: "",
+                name = result.name,
+                mealType = result.mealType.name,
+                calories = result.calories,
+                protein = result.protein,
+                carbs = result.carbs,
+                fat = result.fat,
+                fiber = result.fiber,
+                servings = 1.0,
+                contextNotes = result.notes,
+                imageUrl = result.imageBase64 ?: "",
+                dateString = existing?.dateString ?: _uiState.value.selectedDate,
+                hourOfDay = existing?.hourOfDay ?: hour,
+                userId = uid,
+                ingredientsJson = IngredientJson.toJson(result.ingredients)
+            )
+            try {
+                if (editingId != null) repository.updateMeal(meal, uid) else repository.addMeal(meal, uid)
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    pendingMeal = null,
+                    editingMealId = null,
+                    failedAiQuery = null,
+                    failedAiBitmap = null
+                )
+                onSaved()
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Could not save the meal: ${e.localizedMessage}"
+                )
+            }
+        }
+    }
+
+    fun discardPendingMeal() {
+        _uiState.value = _uiState.value.copy(pendingMeal = null, editingMealId = null)
+    }
+
+    fun deleteEditingMeal(onDone: () -> Unit) {
+        val id = _uiState.value.editingMealId ?: return
+        deleteMeal(id)
+        _uiState.value = _uiState.value.copy(pendingMeal = null, editingMealId = null)
+        onDone()
     }
 }

@@ -38,6 +38,7 @@ data class Meal(
     val hourOfDay: Long = 12L,
     val userId: String = "",
     val ingredientsSummary: String = "",
+    val ingredientsJson: String = "",
     @ServerTimestamp val createdAt: Timestamp? = null,
     @ServerTimestamp val updatedAt: Timestamp? = null
 )
@@ -67,6 +68,13 @@ data class UserGoal(
     val proteinGoal: Long = 100L,
     val carbsGoal: Long = 220L,
     val fatGoal: Long = 55L,
+    /** LOSE, MAINTAIN or GAIN. */
+    val goalType: String = "LOSE",
+    val goalWeightKg: Double = 0.0,
+    val startWeightKg: Double = 0.0,
+    val paceKgPerWeek: Double = 0.5,
+    /** True when the user typed their own calories and macros instead of the calculated ones. */
+    val manual: Boolean = false,
     val userId: String = "",
     @ServerTimestamp val createdAt: Timestamp? = null,
     @ServerTimestamp val updatedAt: Timestamp? = null
@@ -116,4 +124,29 @@ data class MealParsedResult(
     val ingredients: List<MealIngredient> = emptyList(),
     val isAiGenerated: Boolean = true,
     val rawQuery: String = ""
+)
+
+
+@IgnoreExtraProperties
+data class UserProfile(
+    val name: String = "",
+    /** MALE or FEMALE. */
+    val sex: String = "MALE",
+    val age: Long = 30L,
+    val heightCm: Double = 170.0,
+    /** LIGHT, MODERATE or ACTIVE. */
+    val activity: String = "LIGHT",
+    /** Diet and allergies, comma separated, for example "Vegetarian,Peanuts". */
+    val dietTags: String = "",
+    val userId: String = "",
+    @ServerTimestamp val updatedAt: Timestamp? = null
+)
+
+@IgnoreExtraProperties
+data class WeightLog(
+    @DocumentId val id: String = "",
+    val dateString: String = "",
+    val kg: Double = 0.0,
+    val userId: String = "",
+    @ServerTimestamp val createdAt: Timestamp? = null
 )
