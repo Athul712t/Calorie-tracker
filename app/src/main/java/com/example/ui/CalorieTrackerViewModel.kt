@@ -18,6 +18,7 @@ import com.example.model.MenuItem
 import com.example.model.MealParsedResult
 import com.example.model.MealType
 import com.example.model.UserGoal
+import com.example.model.ProgressPhoto
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,7 +56,9 @@ data class CalorieUiState(
     val recentMeals: List<Meal> = emptyList(),
     /** Set while a saved meal is open for editing. Null when the meal on screen is new. */
     val editingMealId: String? = null,
-    val chatBusy: Boolean = false
+    val chatBusy: Boolean = false,
+    /** Progress photos, newest first. */
+    val photos: List<ProgressPhoto> = emptyList()
 ) {
     val totalCalories: Double get() = meals.sumOf { it.calories }
     val totalProtein: Double get() = meals.sumOf { it.protein }
@@ -162,6 +165,13 @@ class CalorieTrackerViewModel(application: Application) : AndroidViewModel(appli
                     .catch { emit(emptyList()) }
                     .collect { list ->
                         _uiState.value = _uiState.value.copy(weights = list)
+                    }
+            },
+            viewModelScope.launch {
+                repository.observePhotos(userId)
+                    .catch { emit(emptyList()) }
+                    .collect { list ->
+                        _uiState.value = _uiState.value.copy(photos = list)
                     }
             }
         )
@@ -718,6 +728,70 @@ class CalorieTrackerViewModel(application: Application) : AndroidViewModel(appli
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(errorMessage = "Could not copy meals: ${e.localizedMessage}")
             }
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Progress: photos and insights
+    // ---------------------------------------------------------------------
+
+    private val photoCache = android.util.LruCache<String, Bitmap>(24)
+
+    /** Saves a progress photo for today. [angle] is FRONT, LEFT, RIGHT or BACK. */
+    fun saveProgressPhoto(angle: String, bitmap: Bitmap, onDone: (Boolean) -> Unit) {
+        val uid = currentUserId ?: Firebase.auth.currentUser?.uid ?: run { onDone(false); return }
+        viewModelScope.launch {
+            try {
+                val out = java.io.ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 85, out)
+                val weight = _uiState.value.weights.firstOrNull()?.kg ?: 0.0
+                repository.savePhoto(angle, getTodayDateString(), weight, out.toByteArray(), uid)
+                onDone(true)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(errorMessage = "Could not save the photo: ${e.localizedMessage}")
+                onDone(false)
+            }
+        }
+    }
+
+    /** A stored photo, or null if it cannot be loaded. Cached in memory. */
+    suspend fun loadPhoto(path: String): Bitmap? {
+        photoCache.get(path)?.let { return it }
+        val bmp = repository.loadPhoto(path) ?: return null
+        photoCache.put(path, bmp)
+        return bmp
+    }
+
+    /** Asks the AI a question about the user's own logged data. */
+    fun askInsight(question: String, onResult: (success: Boolean, text: String) -> Unit) {
+        val summary = buildInsightSummary()
+        viewModelScope.launch {
+            try {
+                onResult(true, aiService.answerProgressQuestion(question, summary))
+            } catch (e: Exception) {
+                onResult(false, e.localizedMessage ?: "That did not work. Please try again.")
+            }
+        }
+    }
+
+    private fun buildInsightSummary(): String {
+        val st = _uiState.value
+        val g = st.goal
+        val byDay = st.recentMeals.groupBy { it.dateString }
+        return buildString {
+            append("Daily targets: ${g.calorieGoal} kcal, protein ${g.proteinGoal} g, carbs ${g.carbsGoal} g, fat ${g.fatGoal} g.\n")
+            append("Goal: ${g.goalType.lowercase()}, goal weight ${g.goalWeightKg} kg, start weight ${g.startWeightKg} kg, pace ${g.paceKgPerWeek} kg per week.\n")
+            append("Last 7 days (today first):\n")
+            for (i in 0..6) {
+                val d = daysAgoString(i)
+                val meals = byDay[d].orEmpty()
+                if (meals.isEmpty()) append("$d: nothing logged\n")
+                else append("$d: ${meals.sumOf { it.calories }.toInt()} kcal, protein ${meals.sumOf { it.protein }.toInt()} g, carbs ${meals.sumOf { it.carbs }.toInt()} g, fat ${meals.sumOf { it.fat }.toInt()} g, meals: ${meals.joinToString(", ") { it.name }}\n")
+            }
+            val ws = st.weights.filter { it.dateString >= daysAgoString(30) }
+            append("Weigh-ins in the last 30 days (newest first): ")
+            append(if (ws.isEmpty()) "none" else ws.joinToString("; ") { "${it.dateString} ${it.kg} kg" })
+            append("\n")
         }
     }
 }

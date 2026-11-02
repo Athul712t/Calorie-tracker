@@ -66,7 +66,12 @@ import com.example.ui.theme.DmSans
  * [onPhoto] gets the photo (already rotated upright) once the user takes or picks one.
  */
 @Composable
-fun CaptureScreen(onBack: () -> Unit, onPhoto: (Bitmap) -> Unit) {
+fun CaptureScreen(
+    onBack: () -> Unit,
+    onPhoto: (Bitmap) -> Unit,
+    title: String = "Point at your meal",
+    permissionReason: String = "Allow the camera so you can photograph your meals."
+) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     var granted by remember {
@@ -122,7 +127,7 @@ fun CaptureScreen(onBack: () -> Unit, onPhoto: (Bitmap) -> Unit) {
                 Spacer(Modifier.height(8.dp))
                 Text(
                     if (asked) "Camera access is off. You can turn it on in Settings, or pick a photo from your gallery."
-                    else "Allow the camera so you can photograph your meals.",
+                    else permissionReason,
                     fontFamily = DmSans, fontSize = 15.sp, color = Color(0xFFC9D0DA), textAlign = TextAlign.Center
                 )
                 Spacer(Modifier.height(20.dp))
@@ -140,7 +145,7 @@ fun CaptureScreen(onBack: () -> Unit, onPhoto: (Bitmap) -> Unit) {
                 container = Color.Black.copy(alpha = 0.45f), tint = Color.White, bordered = false
             )
             Text(
-                "Point at your meal",
+                title,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center,
                 fontFamily = DmSans, fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = Color.White

@@ -150,3 +150,16 @@ data class WeightLog(
     val userId: String = "",
     @ServerTimestamp val createdAt: Timestamp? = null
 )
+
+/** One progress photo. [angle] is FRONT, LEFT, RIGHT or BACK. One photo per angle per day. */
+@IgnoreExtraProperties
+data class ProgressPhoto(
+    @DocumentId val id: String = "",
+    val angle: String = "FRONT",
+    val dateString: String = "",
+    /** Weight at the time of the check-in, 0 if unknown. */
+    val weightKg: Double = 0.0,
+    val storagePath: String = "",
+    val userId: String = "",
+    @ServerTimestamp val createdAt: Timestamp? = null
+)

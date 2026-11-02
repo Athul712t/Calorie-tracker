@@ -8,8 +8,8 @@ Android app that logs meals from a photo, text or search, shows calories and mac
 |---|---|---|---|
 | `onboarding` | Onboarding | Onboarding.dc.html | built, not compiled |
 | `home` | Home (and first-day empty state) | Main.dc.html, EmptyHome.dc.html | built, not compiled |
-| `progress` | Progress | Progress.dc.html | not built |
-| `photos` | Progress photos | Photos.dc.html | not built |
+| `progress` | Progress | Progress.dc.html | built |
+| `photos` | Progress photos | Photos.dc.html | built (needs Firebase Storage) |
 | `profile` | Profile | ProfileSimple.dc.html | built |
 | `profile/edit` | Edit profile | ProfileEdit.dc.html | built |
 | `goal/edit` | Edit goal | GoalEdit.dc.html | built |
@@ -60,7 +60,7 @@ Typical flow: Onboarding → Home → (Capture or Add food or chat bar) → Anal
 | `photos/{id}` | angle, dateString, storagePath |
 | `menu_items/{id}` | saved foods (existing) |
 
-Photos are stored in Firebase Storage under `users/{uid}/photos/...` and meal photos under `users/{uid}/meals/...`; Firestore keeps only the path. Firestore rules (`firestore.rules`) must be extended for each new collection, keeping the owner-only and field validation pattern.
+Photos are stored in Firebase Storage under `users/{uid}/photos/...` and meal photos under `users/{uid}/meals/...`; Firestore keeps only the path. Deploy `storage.rules` as well (Firebase console > Storage > Get started, then `firebase deploy --only storage`). Firestore rules (`firestore.rules`) must be extended for each new collection, keeping the owner-only and field validation pattern.
 
 ## 4. Calorie model (implemented in `domain/NutritionCalculator.kt`)
 
