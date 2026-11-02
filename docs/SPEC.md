@@ -10,9 +10,9 @@ Android app that logs meals from a photo, text or search, shows calories and mac
 | `home` | Home (and first-day empty state) | Main.dc.html, EmptyHome.dc.html | built, not compiled |
 | `progress` | Progress | Progress.dc.html | not built |
 | `photos` | Progress photos | Photos.dc.html | not built |
-| `profile` | Profile | ProfileSimple.dc.html | not built |
-| `profile/edit` | Edit profile | ProfileEdit.dc.html | not built |
-| `goal/edit` | Edit goal | GoalEdit.dc.html | not built |
+| `profile` | Profile | ProfileSimple.dc.html | built |
+| `profile/edit` | Edit profile | ProfileEdit.dc.html | built |
+| `goal/edit` | Edit goal | GoalEdit.dc.html | built |
 | `capture` | Capture (auto-detect) | CaptureAuto.dc.html | built (CameraX), not compiled |
 | `analysing` | Analysing | – | built (no design), not compiled |
 | `meal/{mealId}` | Meal detail with chat edit | MealDetail.dc.html, MealChat.dc.html | built, not compiled |

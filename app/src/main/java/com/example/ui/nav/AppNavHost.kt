@@ -25,6 +25,9 @@ import com.example.ui.capture.CaptureScreen
 import com.example.ui.home.HomeScreen
 import com.example.ui.meal.MealDetailScreen
 import com.example.ui.onboarding.OnboardingScreen
+import com.example.ui.profile.EditGoalScreen
+import com.example.ui.profile.EditProfileScreen
+import com.example.ui.profile.ProfileScreen
 import com.example.ui.theme.AppColors
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -127,14 +130,33 @@ fun AppNavHost(
             )
         }
 
+        composable(Routes.PROFILE) {
+            ProfileScreen(
+                viewModel = viewModel,
+                onBack = back,
+                onEditProfile = { navController.navigate(Routes.PROFILE_EDIT) },
+                onEditGoal = { navController.navigate(Routes.GOAL_EDIT) },
+                onLoggedOut = {
+                    navController.navigate(Routes.ONBOARDING) { popUpTo(0) }
+                }
+            )
+        }
+        composable(Routes.PROFILE_EDIT) { EditProfileScreen(viewModel = viewModel, onBack = back) }
+        composable(Routes.GOAL_EDIT) {
+            EditGoalScreen(
+                viewModel = viewModel,
+                onBack = back,
+                onEditProfile = { navController.navigate(Routes.PROFILE_EDIT) }
+            )
+        }
+
         composable(Routes.SCREEN_INDEX) {
             ScreenIndex(onOpen = { route -> navController.navigate(route) })
         }
 
         // Screens that are designed but not built yet.
         listOf(
-            Routes.PROGRESS, Routes.PHOTOS, Routes.PROFILE, Routes.PROFILE_EDIT,
-            Routes.GOAL_EDIT, Routes.ADD_FOOD, Routes.HISTORY
+            Routes.PROGRESS, Routes.PHOTOS, Routes.ADD_FOOD, Routes.HISTORY
         ).forEach { route ->
             val info = ALL_SCREENS.first { it.route == route }
             composable(route) { PlaceholderScreen(info, back) }
